@@ -24,7 +24,18 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# Borrowed CMake code from the MaidSafe Boost CMake build
-# found at https://github.com/maidsafe/MaidSafe/blob/master/cmake_modules/add_boost.cmake
-# and code borrowed from ITK4 HDFMacros.cmake
 
+# Setting up external library for BWA
+SET(BWA_PROJECT bwa_project CACHE INTERNAL "bwa project name")
+SET(BWA_DIR ${CMAKE_CURRENT_BINARY_DIR}/externals/bwa CACHE INTERNAL "bwa project directory")
+ExternalProject_Add(${BWA_PROJECT}
+	GIT_REPOSITORY https://github.com/lh3/bwa.git
+	GIT_TAG 0911122749ccfa7bd4ae9c464778f56372524f96 #lock in the commit id so we don't this doesn't break in the future
+	UPDATE_COMMAND ""
+	INSTALL_COMMAND ""
+	BUILD_COMMAND "make"
+	CONFIGURE_COMMAND ""
+	BINARY_DIR ${BWA_DIR}
+	SOURCE_DIR ${BWA_DIR}
+	DEPENDS ${ZLIB_PROJECT}
+)

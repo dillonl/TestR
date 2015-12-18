@@ -24,7 +24,15 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# Borrowed CMake code from the MaidSafe Boost CMake build
-# found at https://github.com/maidsafe/MaidSafe/blob/master/cmake_modules/add_boost.cmake
-# and code borrowed from ITK4 HDFMacros.cmake
-
+# Setting up external library jellyfish, we don't build it because we only need the include directories
+SET(JELLYFISH_PROJECT jellyfish_project CACHE INTERNAL "jellyfish project name")
+SET(JELLYFISH_DIR ${CMAKE_CURRENT_BINARY_DIR}/externals/jellyfish CACHE INTERNAL "jellyfish project directory")
+ExternalProject_Add(${JELLYFISH_PROJECT}
+	GIT_REPOSITORY https://github.com/gmarcais/Jellyfish.git
+	GIT_TAG 34a6a6a63e1120ccdbb13582dc16bb132ebb31df #lock in the commit id so we don't this doesn't break in the future
+	UPDATE_COMMAND ""
+	INSTALL_COMMAND ""
+	BUILD_COMMAND ""
+	CONFIGURE_COMMAND ""
+	PREFIX ${JELLYFISH_DIR}
+)
