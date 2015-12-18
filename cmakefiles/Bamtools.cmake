@@ -24,17 +24,24 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# Borrowed CMake code from the SCI at the U of U
-# found at https://github.com/SCIInstitute/SCIRun/blob/43bf24730c6f0f505268aea91267c8db2e87895e/Superbuild/BoostExternal.cmake
-
-include(ExternalProject)
-
 # Setting up external library bamtools, we don't build it because we only need the include directories
+
+SET_PROPERTY(DIRECTORY PROPERTY "EP_BASE" ${ep_base})
+
 SET(BAMTOOLS_PROJECT bamtools_project CACHE INTERNAL "bamtools project name")
-SET(BAMTOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/externals/bamtools CACHE INTERNAL "bamtools project directory")
+SET(BAMTOOLS_DIR ${CMAKE_BINARY_DIR}/externals/bamtools CACHE INTERNAL "bamtools project directory")
+SET(BAMTOOLS_LIB)
 ExternalProject_Add(${BAMTOOLS_PROJECT}
 	GIT_REPOSITORY https://github.com/pezmaster31/bamtools.git
 	GIT_TAG 02c2be8866f9e43b1b5f0f80e4daae5ff352c06b #lock in the commit id so we don't this doesn't break in the future
 	INSTALL_COMMAND ""
 	PREFIX ${BAMTOOLS_DIR}
 )
+
+ExternalProject_Get_Property(${BAMTOOLS_PROJECT} INSTALL_DIR)
+ExternalProject_Get_Property(${BAMTOOLS_PROJECT} SOURCE_DIR)
+ExternalProject_Get_Property(${BAMTOOLS_PROJECT} BINARY_DIR)
+
+SET(BAMTOOLS_LIB ${SOURCE_DIR}/lib/libbamtools.a CACHE INTERNAL "Bamtools Lib")
+SET(BAMTOOLS_UTIL_LIB ${SOURCE_DIR}/lib/libbamtools-utils.a CACHE INTERNAL "Bamtools-util Lib")
+SET(BAMTOOLS_INCLUDE ${SOURCE_DIR}/include CACHE INTERNAL "Bamtools Include")

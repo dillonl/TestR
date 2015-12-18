@@ -25,20 +25,19 @@
 #  DEALINGS IN THE SOFTWARE.
 
 
-# Setting up external library for BWA
-SET(BWA_PROJECT bwa_project CACHE INTERNAL "bwa project name")
-SET(BWA_DIR ${CMAKE_BINARY_DIR}/externals/bwa CACHE INTERNAL "bwa project directory")
-ExternalProject_Add(${BWA_PROJECT}
-	GIT_REPOSITORY https://github.com/lh3/bwa.git
-	GIT_TAG 0911122749ccfa7bd4ae9c464778f56372524f96 #lock in the commit id so we don't this doesn't break in the future
+# Setting up external library for FASTAHACK
+SET(FASTAHACK_PROJECT fastahack_project CACHE INTERNAL "fastahack project name")
+SET(FASTAHACK_DIR ${CMAKE_BINARY_DIR}/externals/fastahack CACHE INTERNAL "fastahack project directory")
+ExternalProject_Add(${FASTAHACK_PROJECT}
+	GIT_REPOSITORY https://github.com/ekg/fastahack.git
+	GIT_TAG a979a773ed396831c87bdf313fc63c93827767cc #lock in the commit id so we don't this doesn't break in the future
 	UPDATE_COMMAND ""
 	INSTALL_COMMAND ""
 	BUILD_COMMAND "make"
 	CONFIGURE_COMMAND ""
-	BINARY_DIR ${BWA_DIR}
-	SOURCE_DIR ${BWA_DIR}
-	DEPENDS ${ZLIB_PROJECT}
+	BINARY_DIR ${FASTAHACK_DIR}
+	SOURCE_DIR ${FASTAHACK_DIR}
 )
 
-SET(BWA_LIB ${BWA_DIR}/libbwa.a CACHE INTERNAL "BWA Library")
-SET(BWA_INCLUDE ${BWA_DIR} CACHE INTERNAL "BWA Include")
+#SET(FASTAHACK_LIB ${FASTAHACK_DIR}/fastahack CACHE INTERNAL "FASTAHACK Library")
+#SET(FASTAHACK_INCLUDE ${FASTAHACK_DIR} CACHE INTERNAL "FASTAHACK Include")

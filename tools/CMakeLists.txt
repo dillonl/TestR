@@ -12,7 +12,6 @@ set(RUFUS_TOOLS_SOURCES
 )
 
 #ADD_DEFINITIONS(-DBOOST_FALLTHROUGH)
-message("boost include ${SCI_BOOST_INCLUDE}")
 INCLUDE_DIRECTORIES(${SCI_BOOST_INCLUDE})
 
 
@@ -30,14 +29,13 @@ add_executable(rufus
 
 add_dependencies(rufus ${BAMTOOLS_PROJECT} ${JELLYFISH_PROJECT} ${BWA_PROJECT} Boost_external)
 
-
 # link libraries to executables
 target_link_libraries(rufus
-#  ${BAMTOOLS_PROJECT}
-#  BamTools-utils
-#  ${PLUGIN_LIBS}
-#  ${CORE_LIB}
-#  fastahack_lib
-  ${SCI_BOOST_LIBRARY}
-#  ${GSSW_LIB}
+    ${BAMTOOLS_LIB}
+   	${BAMTOOLS_UTIL_LIB}
+   	${BWA_LIB}
+	${SCI_BOOST_LIBRARY}
+	${ZLIB_LIB}
+	#${FASTAHACK_LIB}
+	#${CORE_LIB}
 )
