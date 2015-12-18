@@ -32,6 +32,9 @@ ExternalProject_Add(${ZLIB_PROJECT}
 	GIT_TAG 50893291621658f355bc5b4d450a8d06a563053d #lock in the commit id so we don't this doesn't break in the future
 	INSTALL_COMMAND ""
 	PREFIX ${ZLIB_DIR}
+    CMAKE_CACHE_ARGS
+        -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
 )
 
 ExternalProject_Get_Property(${ZLIB_PROJECT} INSTALL_DIR)

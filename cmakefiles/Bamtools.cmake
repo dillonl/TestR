@@ -36,6 +36,9 @@ ExternalProject_Add(${BAMTOOLS_PROJECT}
 	GIT_TAG 02c2be8866f9e43b1b5f0f80e4daae5ff352c06b #lock in the commit id so we don't this doesn't break in the future
 	INSTALL_COMMAND ""
 	PREFIX ${BAMTOOLS_DIR}
+    CMAKE_CACHE_ARGS
+        -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
 )
 
 ExternalProject_Get_Property(${BAMTOOLS_PROJECT} INSTALL_DIR)
