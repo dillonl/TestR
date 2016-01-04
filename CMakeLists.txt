@@ -20,9 +20,10 @@ IF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
   MESSAGE(SEND_ERROR "In-source builds are not allowed, please build this in the bin directory!")
 ENDIF("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
+INCLUDE_DIRECTORIES(core)
+
 # add subfolders
 ADD_SUBDIRECTORY(cmakefiles)
-#ADD_SUBDIRECTORY(externals)
-#ADD_SUBDIRECTORY(core)
+ADD_SUBDIRECTORY(core)
 ADD_SUBDIRECTORY(tools)
 #ADD_SUBDIRECTORY(tests)
