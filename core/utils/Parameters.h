@@ -15,6 +15,9 @@ namespace rufus
 		~Parameters();
 
 		void parseRUFUS(int argc, char** argv);
+		bool showHelp();
+		void printHelp();
+		bool validateRequired();
 
 	private:
 		std::shared_ptr< boost::program_options::options_description > m_options_description_ptr;

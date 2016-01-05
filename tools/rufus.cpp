@@ -6,7 +6,14 @@
 
 int main(int argc, char** argv)
 {
-	boost::filesystem::path hello("");
-	std::cout << "hello world" << std::endl;
+	rufus::Parameters params;
+	params.parseRUFUS(argc, argv);
+
+	if (params.showHelp() || !params.validateRequired())
+	{
+		params.printHelp();
+		exit(0);
+	}
+
 	return 0;
 }

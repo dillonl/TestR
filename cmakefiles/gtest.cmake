@@ -24,13 +24,28 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-include(ExternalProject)
+# Setting up external library bamtools, we don't build it because we only need the include directories
 
-include(Bamtools.cmake)
-include(Jellyfish.cmake)
-include(fastahack.cmake)
-include(zlib.cmake)
-include(bwa.cmake)
-include(Boost.cmake)
-include(gtest.cmake)
+SET_PROPERTY(DIRECTORY PROPERTY "EP_BASE" ${ep_base})
 
+SET(GTEST_PROJECT gtest_project CACHE INTERNAL "gtest project name")
+SET(GTEST_DIR ${CMAKE_BINARY_DIR}/externals/gtest CACHE INTERNAL "gtest project directory")
+SET(GTEST_LIB)
+ExternalProject_Add(${GTEST_PROJECT}
+	GIT_REPOSITORY https://github.com/google/googletest.git
+	GIT_TAG 13206d6f53aaff844f2d3595a01ac83a29e383db #lock in the commit id so we don't this doesn't break in the future
+	INSTALL_COMMAND ""
+	PREFIX ${GTEST_DIR}
+    CMAKE_CACHE_ARGS
+        -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+)
+
+ExternalProject_Get_Property(${GTEST_PROJECT} INSTALL_DIR)
+ExternalProject_Get_Property(${GTEST_PROJECT} SOURCE_DIR)
+ExternalProject_Get_Property(${GTEST_PROJECT} BINARY_DIR)
+
+#SET(GTEST_LIB ${BINARY_DIR}/googlemock/gtest/libgtest.a CACHE INTERNAL "gtest Lib")
+#LINK_DIRECTORIES(${BINARY_DIR}/googlemock/gtest/)
+SET(GTEST_LIB ${BINARY_DIR}/googlemock/gtest/libgtest.a CACHE INTERNAL "gtest lib")
+SET(GTEST_INCLUDE ${SOURCE_DIR}/googletest CACHE INTERNAL "gtest Include")
