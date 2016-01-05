@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 
 	if (params.showHelp() || !params.validateRequired())
 	{
-		params.printHelp();
+	    params.printHelp();
 		exit(0);
 	}
 

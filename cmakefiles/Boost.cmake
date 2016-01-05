@@ -106,7 +106,6 @@ ENDFOREACH()
 
 SET(SCI_BOOST_LIBRARY ${SCI_BOOST_LIBRARY_TMP} CACHE INTERNAL "-Boost library.") # set the lib variable
 
-
 # Boost is special case - normally this should be handled in external library repo
 #CONFIGURE_FILE(${SUPERBUILD_DIR}/BoostConfig.cmake.in ${INSTALL_DIR}/BoostConfig.cmake @ONLY)
 #CONFIGURE_FILE(${SUPERBUILD_DIR}/UseBoost.cmake ${SCI_BOOST_USE_FILE} COPYONLY)
