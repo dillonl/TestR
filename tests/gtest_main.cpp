@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 
+#include "AlignmentParserTests.hpp"
+
 GTEST_API_ int main(int argc, char** argv)
 {
 	::testing::InitGoogleTest(&argc, argv);
