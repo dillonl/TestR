@@ -3,7 +3,10 @@
 
 #include <string>
 
+#include <boost/lockfree/queue.hpp>
+
 #include "parsers/AlignmentParser.hpp"
+#include "utils/ThreadPool.hpp"
 
 namespace
 {
@@ -13,14 +16,18 @@ namespace
 		//std::string alignment = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		std::string alignment = "CCCCCCCCCCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGGGGGGGGGGGTTTTTTTTTTTTTTTTTTTTTTTTT";
 		InternalKmer parsedKmer;
+
+		std::unordered_map< InternalKmer, char > map;
+		ThreadPool::Instance()->setThreadCount(5);
 		std::cout << "starting" << std::endl;
 		bool success = true;
-		for (uint32_t i = 0; i < 1000000; ++i)
+		for (uint32_t i = 0; i < 100000000; ++i)
 		{
-			success |= AlignmentParser::ParseAlignment(alignment.c_str(), alignment.size(), parsedKmer);
+			ThreadPool::Instance()->enqueue(std::bind(&AlignmentParser::ParseAlignment< 25 >, alignment.c_str(), alignment.size()));
+			//success |= AlignmentParser::ParseAlignment(alignment.c_str(), alignment.size(), parsedKmer);
 		}
+		ThreadPool::Instance()->joinAll();
 		std::cout << "ending" << std::endl;
-
 		ASSERT_TRUE(success);
 		//ASSERT_EQ();
 	}
