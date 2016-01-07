@@ -5,14 +5,11 @@
 
 namespace rufus
 {
-	/*
-#define A 0x0;
-#define C 0x1;
-#define T 0x2;
-#define G 0x3;
-	*/
-
 	typedef uint64_t InternalKmer;
+
+#define KMER_SIZE 25ULL
+#define KMER_SHIFTER_SIZE (KMER_SIZE * 2)
+#define KMER_COUNT_INC 1ULL
 }
 
 #endif //CORE_UTILS_TYPES_H

@@ -16,7 +16,6 @@ namespace rufus
 	class AlignmentParser : private boost::noncopyable
 	{
 	public:
-		template< uint32_t KMER_SIZE = 25 >
 		static inline bool ParseAlignment(const char* alignment, size_t alignmentLength, std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual >* kSet)
 		{
 			std::cout << "addr: " << kSet << std::endl;
