@@ -2,6 +2,7 @@
 #define RUFUS_CORE_CONTAINERS_KMERSETMANAGER_HPP
 
 #include "KmerSet.hpp"
+#include "utils/ThreadPool.hpp"
 
 #include <memory>
 #include <thread>
@@ -20,8 +21,10 @@ namespace rufus
 	{
 	public:
 		typedef std::shared_ptr< KmerSetManager > SharedPtr;
-		KmerSetManager() : m_kmer_queue(0)
+		KmerSetManager() : m_kmer_queue(0), m_stopped(false)
 		{
+			m_kmer_set = std::make_shared< KmerSet >();
+			init();
 		}
 
 		~KmerSetManager()
@@ -31,51 +34,63 @@ namespace rufus
 
 		inline void addKmer(InternalKmer internalKmer)
 		{
-			m_kmer_queue.push(internalKmer);
-			this->m_condition.notify_one();
-		}
-
-		void joinAll()
-		{
+			if (!m_stopped)
+			{
+				m_kmer_queue.push(internalKmer);
+				this->m_condition.notify_one();
+			}
 		}
 
 		void stop()
 		{
+			m_stopped = true;
+			this->m_condition.notify_one();
+		}
 
+		KmerSet::SharedPtr getKmerSet()
+		{
+			return m_kmer_set;
 		}
 
 	private:
 		void init()
 		{
-			m_worker_ptr = std::make_shared< std::thread >(&KmerSetManager::start, this);
+			start();
 		}
 
 		void start()
 		{
-			for (;;)
+			ThreadPool::Instance()->enqueue([this]()
 			{
-				std::unique_lock< std::mutex > lock(this->m_queue_lock);
-				this->m_condition.wait(lock, [this] { return this->m_stopped || !this->m_kmer_queue.empty(); });
-				if (this->m_stopped && this->m_kmer_queue.empty()) { return; }
-				while (!this->m_kmer_queue.empty())
+				auto internalKmer = 0;
+				for (;;)
 				{
-					auto internalKmer = 0;
-					if ( m_kmer_queue.pop(internalKmer))
+					std::unique_lock< std::mutex > lock(this->m_queue_lock);
+					// std::cout << "waiting" << std::endl;
+					this->m_condition.wait(lock, [this] { return this->m_stopped || !this->m_kmer_queue.empty(); });
+					// std::cout << "done waiting" << std::endl;
+					if (this->m_stopped && this->m_kmer_queue.empty()) { return; }
+					while (!this->m_kmer_queue.empty())
 					{
-						m_kmer_set.addKmer(internalKmer);
+						// std::cout << "getting from queue: " << internalKmer << std::endl;
+						if (m_kmer_queue.pop(internalKmer))
+						{
+							// std::cout << "got from queue1: " << internalKmer << std::endl;
+							m_kmer_set->addKmer(internalKmer);
+							// std::cout << "got from queue2" << std::endl;
+						}
 					}
 				}
-			}
+			});
 		}
 
 		boost::lockfree::queue< InternalKmer > m_kmer_queue;
 
-		std::shared_ptr< std::thread > m_worker_ptr;
 		std::mutex m_queue_lock;
 		std::condition_variable m_condition;
 		bool m_stopped;
 
-		KmerSet m_kmer_set;
+		KmerSet::SharedPtr m_kmer_set;
 
 	};
 }

@@ -81,7 +81,6 @@ namespace rufus
 		static inline bool parse(const char* alignmentCharacter, InternalKmer& kmer, uint64_t kmerBitOffset, uint64_t counter)
 		{
 			uint64_t shifter = (kmerBitOffset * 2);
-			// std::cout << "offset: " << alignmentCharacter[kmerBitOffset + counter] << " " << shifter << " " << counter << " " << std::bitset< 8 > (((alignmentCharacter[kmerBitOffset + counter] >> shifter1) & 0x3)) << std::endl;
 			if ((alignmentCharacter[kmerBitOffset + counter]) & (1 >> (3))) { return false; } // if this is a non basepair char
 			kmer |= (((alignmentCharacter[kmerBitOffset + counter] >> shifter1) & 0x3) & shifter3) << shifter;
 			return true;

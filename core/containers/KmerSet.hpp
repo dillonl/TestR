@@ -58,6 +58,11 @@ namespace rufus
 			return (iter != m_kmer_set.end()) ? ((*iter) >> KMER_SHIFTER_SIZE) : 0;
 		}
 
+		size_t getSetSize()
+		{
+			return m_kmer_set.size();
+		}
+
 	private:
 		std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
 

@@ -13,32 +13,32 @@ namespace
 {
 	using namespace rufus;
 
-	/*
 	TEST(AlignmentParserTest, TestInsertionSpeed)
 	{
 		bool success = true;
 		KmerSet kSet;
+		static std::atomic< uint64_t > counter(0);
 		// std::unordered_set< uint64_t > kSet;
-		for (uint64_t i = 0; i < 500000000; ++i)
+		for (uint64_t i = 0; i < 50000000; ++i)
 		{
-			kSet.addKmer((InternalKmer)i);
+			kSet.addKmer((InternalKmer)counter++);
 		}
 		ASSERT_TRUE(success); //(34588 ms total)
 	}
-	*/
 
 	TEST(AlignmentParserTest, TestInsertionSpeed)
 	{
 		bool success = true;
 		KmerSetManager kSetManager;
+		static std::atomic< uint64_t > counter(0);
 		// auto funct = std::bind(&KmerSetManager::addKmer, &kSetManager, std::placeholders::_1);
 		auto funct = [&] ()
 		{
-			for (uint64_t i = 0; i < 25000000; ++i)
+			for (uint64_t i = 0; i < 2500000; ++i)
 			{
-				kSetManager.addKmer((InternalKmer)i);
-				// ASSERT_TRUE(kSet.getKmerCount((InternalKmer)i) == 10);
+				kSetManager.addKmer((InternalKmer)counter++);
 			}
+			std::cout << "finished one loop" << std::endl;
 		};
 		for (int i = 0; i < 5; ++i)
 		{
@@ -47,7 +47,11 @@ namespace
 			ThreadPool::Instance()->enqueue(funct);
 			ThreadPool::Instance()->enqueue(funct);
 		}
+		kSetManager.stop();
 		ThreadPool::Instance()->joinAll();
+		auto kSet = kSetManager.getKmerSet();
+		std::cout << "kmer count: " << kSet->getSetSize() << std::endl;
+		std::cout << "total count: " << counter << std::endl;
 		ASSERT_TRUE(success); //(72470 ms total)
 	}
 
