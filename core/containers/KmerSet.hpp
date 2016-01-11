@@ -4,6 +4,7 @@
 #include "utils/Types.h"
 
 #include <memory>
+#include <unordered_set>
 
 #include <boost/noncopyable.hpp>
 

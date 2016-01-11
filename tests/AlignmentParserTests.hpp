@@ -26,7 +26,7 @@ namespace
 		ASSERT_TRUE(success); //(34588 ms total)
 	}
 
-	TEST(AlignmentParserTest, TestInsertionSpeed)
+	TEST(AlignmentParserTest, TestInsertionSpeed2)
 	{
 		bool success = true;
 		KmerSetManager kSetManager;
