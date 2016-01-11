@@ -26,7 +26,7 @@ add_executable(rufus
   ${RUFUS_TOOLS_SOURCES}
 )
 
-add_dependencies(rufus ${BAMTOOLS_PROJECT} ${JELLYFISH_PROJECT} ${BWA_PROJECT} Boost_external)
+add_dependencies(rufus ${BAMTOOLS_PROJECT} ${JELLYFISH_PROJECT} ${BWA_PROJECT} Boost_external ${SPARSEHASH_PROJECT})
 
 # link libraries to executables
 target_link_libraries(rufus

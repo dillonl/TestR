@@ -4,7 +4,8 @@
 #include <string>
 #include <unordered_set>
 
-#include "containers/KmerSet.hpp"
+// #include "containers/KmerSet.hpp"
+#include "containers/SparseKmerSet.hpp"
 #include "containers/KmerSetManager.hpp"
 #include "parsers/AlignmentParser.hpp"
 #include "utils/ThreadPool.hpp"
@@ -13,19 +14,28 @@ namespace
 {
 	using namespace rufus;
 
-	TEST(AlignmentParserTest, TestInsertionSpeed)
+
+    TEST(AlignmentParserTest, TestInsertionSpeed)
 	{
 		bool success = true;
-		KmerSet kSet;
-		static std::atomic< uint64_t > counter(0);
-		// std::unordered_set< uint64_t > kSet;
-		for (uint64_t i = 0; i < 50000000; ++i)
+		SparseKmerSet kSet;
+        // std::unordered_set< uint64_t > kSet;
+		uint64_t counter = 0;
+		for (uint64_t i = 0; i < 10; ++i)
 		{
-			kSet.addKmer((InternalKmer)counter++);
+			for (uint64_t j = 0; j < 5000000; ++j)
+			{
+				kSet.addKmer((InternalKmer)j);
+				++counter;
+			}
 		}
+		std::cout << "total: " << counter << std::endl;
+		std::cout << "kmer set size: " << kSet.getSetSize() << std::endl;
+		std::cout << "kmer 0 count: " << kSet.getKmerCount(0) << std::endl;
 		ASSERT_TRUE(success); //(34588 ms total)
 	}
 
+/*
 	TEST(AlignmentParserTest, TestInsertionSpeed2)
 	{
 		bool success = true;
@@ -54,6 +64,7 @@ namespace
 		std::cout << "total count: " << counter << std::endl;
 		ASSERT_TRUE(success); //(72470 ms total)
 	}
+*/
 
 	/*
 	TEST(AlignmentParserTest, ParseA)

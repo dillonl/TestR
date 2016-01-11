@@ -2,6 +2,7 @@
 #define RUFUS_CORE_CONTAINERS_KMERSETMANAGER_HPP
 
 #include "KmerSet.hpp"
+#include "SparseKmerSet.hpp"
 #include "utils/ThreadPool.hpp"
 
 #include <memory>

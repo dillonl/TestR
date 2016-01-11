@@ -1,25 +1,28 @@
-#ifndef CORE_CONTAINERS_KMERSET_HPP
-#define CORE_CONTAINERS_KMERSET_HPP
+#ifndef CORE_CONTAINERS_SPARSEKMERSET_HPP
+#define CORE_CONTAINERS_SPARSEKMERSET_HPP
 
 #include "KmerHash.hpp"
+
 #include "utils/Types.h"
 
 #include <memory>
-#include <unordered_set>
 
 #include <boost/noncopyable.hpp>
 
+#include <google/sparse_hash_set>
+
 namespace rufus
 {
-	class KmerSet : private boost::noncopyable
+
+	class SparseKmerSet : private boost::noncopyable
 	{
 	public:
-		typedef std::shared_ptr< KmerSet > SharedPtr;
-		KmerSet()
+		typedef std::shared_ptr< SparseKmerSet > SharedPtr;
+		SparseKmerSet()
 		{
 		}
 
-		~KmerSet()
+		~SparseKmerSet()
 		{
 		}
 
@@ -29,7 +32,7 @@ namespace rufus
 			if (iter == m_kmer_set.end())
 			{
 				internalKmer = (internalKmer & 0x0003FFFFFFFFFFFF);
-				m_kmer_set.emplace(internalKmer);
+				m_kmer_set.insert(internalKmer);
 				iter = m_kmer_set.find(internalKmer);
 			}
 			auto iterPtr = const_cast< InternalKmer* >(&(*iter));
@@ -48,9 +51,10 @@ namespace rufus
 		}
 
 	private:
-		std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
+		google::sparse_hash_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
+		// std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
 
 	};
 }
 
-#endif // CORE_CONTAINERS_KMERSET_HPP
+#endif // CORE_CONTAINERS_SPARSEKMERSET_HPP

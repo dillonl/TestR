@@ -24,14 +24,30 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-include(ExternalProject)
+# Setting up external library openmp
 
-include(Bamtools.cmake)
-include(Jellyfish.cmake)
-include(fastahack.cmake)
-include(zlib.cmake)
-include(bwa.cmake)
-include(Boost.cmake)
-include(gtest.cmake)
-include(sparsehash.cmake)
+SET(SPARSEHASH_PROJECT sparsehash_project CACHE INTERNAL "sparsehash project name")
+SET(SPARSEHASH_DIR ${CMAKE_BINARY_DIR}/externals/sparsehash CACHE INTERNAL "sparsehash project directory")
+SET(SPARSEHASH_LIB)
+ExternalProject_Add(${SPARSEHASH_PROJECT}
+	GIT_REPOSITORY https://github.com/dillonl/sparsehash.git
+	GIT_TAG "master"
+	INSTALL_COMMAND ""
+    SOURCE_DIR ${SPARSEHASH_DIR}
+	CONFIGURE_COMMAND ./configure --prefix=${SPARSEHASH_DIR}
+	BUILD_COMMAND "make" -j4
+	BUILD_IN_SOURCE 1
+    CMAKE_CACHE_ARGS
+        -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+)
+
+ExternalProject_Get_Property(${SPARSEHASH_PROJECT} INSTALL_DIR)
+ExternalProject_Get_Property(${SPARSEHASH_PROJECT} SOURCE_DIR)
+ExternalProject_Get_Property(${SPARSEHASH_PROJECT} BINARY_DIR)
+
+#SET(SPARSEHASH_LIB ${SOURCE_DIR}/sparsehash CACHE INTERNAL "sparsehash Lib")
+SET(SPARSEHASH_INCLUDE_DIR ${SOURCE_DIR}/src CACHE INTERNAL "sparsehash Include")
+
+
 
