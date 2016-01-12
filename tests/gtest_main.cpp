@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "AlignmentParserTests.hpp"
+#include "SparseKmerSetTests.hpp"
 
 GTEST_API_ int main(int argc, char** argv)
 {

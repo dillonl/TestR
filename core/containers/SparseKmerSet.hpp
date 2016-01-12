@@ -18,7 +18,7 @@ namespace rufus
 	{
 	public:
 		typedef std::shared_ptr< SparseKmerSet > SharedPtr;
-		SparseKmerSet()
+		SparseKmerSet() : m_bit_mask(KMER_MASK)
 		{
 		}
 
@@ -31,7 +31,7 @@ namespace rufus
 			auto iter = m_kmer_set.find(internalKmer);
 			if (iter == m_kmer_set.end())
 			{
-				internalKmer = (internalKmer & 0x0003FFFFFFFFFFFF);
+				internalKmer = (internalKmer & m_bit_mask);
 				m_kmer_set.insert(internalKmer);
 				iter = m_kmer_set.find(internalKmer);
 			}
@@ -52,7 +52,7 @@ namespace rufus
 
 	private:
 		google::sparse_hash_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
-		// std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
+		InternalKmer m_bit_mask;
 
 	};
 }

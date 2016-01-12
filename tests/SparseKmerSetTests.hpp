@@ -1,5 +1,5 @@
-#ifndef TESTS_ALIGNMENTPARSER_H
-#define TESTS_ALIGNMENTPARSER_H
+#ifndef TESTS_SPARSEKMERSETTESTS_H
+#define TESTS_SPARSEKMERSETTESTS_H
 
 #include <string>
 #include <unordered_set>
@@ -13,6 +13,27 @@
 namespace
 {
 	using namespace rufus;
+
+	TEST(SparseKmerSetTest, InsertionOfZeroItemsSizeZero)
+	{
+		SparseKmerSet::SharedPtr sks = std::make_shared< SparseKmerSet >();
+		ASSERT_EQ(sks->getSetSize(), 0);
+	}
+
+	TEST(SparseKmerSetTest, KmerCountZero)
+	{
+		SparseKmerSet::SharedPtr sks = std::make_shared< SparseKmerSet >();;
+		InternalKmer ik = 0; // represents a 25-mer of all A's
+		ASSERT_EQ(sks->getKmerCount(ik), 0);
+	}
+
+	TEST(SparseKmerSetTest, KmerCountOne)
+	{
+		SparseKmerSet::SharedPtr sks = std::make_shared< SparseKmerSet >();;
+		InternalKmer ik = 0; // represents a 25-mer of all A's
+		sks->addKmer(ik);
+		ASSERT_EQ(sks->getKmerCount(ik), 1);
+	}
 
 	/*
     TEST(AlignmentParserTest, TestInsertionSpeed)
@@ -114,4 +135,4 @@ namespace
 	*/
 }
 
-#endif //TESTS_ALIGNMENTPARSER_H
+#endif //TESTS_SPARSEKMERSETTESTS_H
