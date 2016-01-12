@@ -4,6 +4,11 @@
 # text/CMakeLists.txt
 # =================================
 
+configure_file (
+  "${CMAKE_CURRENT_SOURCE_DIR}/config/DataPaths.h.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/config/DataPaths.h"
+)
+
 # set header and source files
 set(RUFUS_TEST_SOURCES
   gtest_main.cpp
