@@ -2,6 +2,7 @@
 #define CORE_UTILS_TYPES_H
 
 #include <cstdint>
+#include <limits>
 
 namespace rufus
 {
