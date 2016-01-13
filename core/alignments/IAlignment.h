@@ -1,8 +1,6 @@
 #ifndef RUFUS_ALIGNMENTS_IALIGNMENT_H
 #define RUFUS_ALIGNMENTS_IALIGNMENT_H
 
-#include <boost/noncopyable.hpp>
-
 #include <memory>
 #include <unordered_map>
 #include <mutex>
@@ -10,11 +8,12 @@
 #include <string>
 
 #include "utils/Types.h"
+#include "utils/Noncopyable.hpp"
 
 namespace rufus
 {
 
-	class IAlignment : private boost::noncopyable
+	class IAlignment : private Noncopyable
 	{
 	public:
 		typedef std::shared_ptr< IAlignment > SharedPtr;

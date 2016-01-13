@@ -5,12 +5,11 @@
 #include "api/BamAlignment.h"
 
 #include "IAlignmentReader.h"
-
-#include <boost/noncopyable.hpp>
+#include "utils/Noncopyable.hpp"
 
 namespace rufus
 {
-	class BamAlignmentReader : private IAlignmentReader
+	class BamAlignmentReader : private Noncopyable
 	{
 	public:
         typedef std::shared_ptr< BamAlignmentReader > SharedPtr;

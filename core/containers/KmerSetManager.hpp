@@ -1,7 +1,6 @@
 #ifndef RUFUS_CORE_CONTAINERS_KMERSETMANAGER_HPP
 #define RUFUS_CORE_CONTAINERS_KMERSETMANAGER_HPP
 
-#include "KmerSet.hpp"
 #include "SparseKmerSet.hpp"
 #include "utils/ThreadPool.hpp"
 
@@ -13,8 +12,7 @@
 #include <functional>
 #include <stdexcept>
 
-#include <boost/noncopyable.hpp>
-#include <boost/lockfree/queue.hpp>
+#include <concurrentqueue.h>
 
 namespace rufus
 {
@@ -24,7 +22,7 @@ namespace rufus
 		typedef std::shared_ptr< KmerSetManager > SharedPtr;
 		KmerSetManager() : m_kmer_queue(0), m_stopped(false)
 		{
-			m_kmer_set = std::make_shared< KmerSet >();
+			m_kmer_set = std::make_shared< SparseKmerSet >();
 			init();
 		}
 
@@ -37,7 +35,7 @@ namespace rufus
 		{
 			if (!m_stopped)
 			{
-				m_kmer_queue.push(internalKmer);
+				m_kmer_queue.enqueue(internalKmer);
 				this->m_condition.notify_one();
 			}
 		}
@@ -48,7 +46,7 @@ namespace rufus
 			this->m_condition.notify_one();
 		}
 
-		KmerSet::SharedPtr getKmerSet()
+		SparseKmerSet::SharedPtr getKmerSet()
 		{
 			return m_kmer_set;
 		}
@@ -68,13 +66,13 @@ namespace rufus
 				{
 					std::unique_lock< std::mutex > lock(this->m_queue_lock);
 					// std::cout << "waiting" << std::endl;
-					this->m_condition.wait(lock, [this] { return this->m_stopped || !this->m_kmer_queue.empty(); });
+					this->m_condition.wait(lock, [this] { return this->m_stopped || (this->m_kmer_queue.size_approx() > 0); });
 					// std::cout << "done waiting" << std::endl;
-					if (this->m_stopped && this->m_kmer_queue.empty()) { return; }
-					while (!this->m_kmer_queue.empty())
+					if (this->m_stopped && (this->m_kmer_queue.size_approx() == 0)) { return; }
+					while (this->m_kmer_queue.size_approx() > 0)
 					{
 						// std::cout << "getting from queue: " << internalKmer << std::endl;
-						if (m_kmer_queue.pop(internalKmer))
+						if (m_kmer_queue.try_dequeue(internalKmer))
 						{
 							// std::cout << "got from queue1: " << internalKmer << std::endl;
 							m_kmer_set->addKmer(internalKmer);
@@ -85,13 +83,14 @@ namespace rufus
 			});
 		}
 
-		boost::lockfree::queue< InternalKmer > m_kmer_queue;
+		// boost::lockfree::queue< InternalKmer > m_kmer_queue;
+		moodycamel::ConcurrentQueue< InternalKmer > m_kmer_queue;
 
 		std::mutex m_queue_lock;
 		std::condition_variable m_condition;
 		bool m_stopped;
 
-		KmerSet::SharedPtr m_kmer_set;
+		SparseKmerSet::SharedPtr m_kmer_set;
 
 	};
 }

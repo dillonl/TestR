@@ -5,8 +5,6 @@
 
 #include <memory>
 
-#include <boost/noncopyable.hpp>
-
 namespace rufus
 {
 	class KmerHash

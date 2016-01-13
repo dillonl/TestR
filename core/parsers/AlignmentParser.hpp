@@ -2,8 +2,7 @@
 #define CORE_PARSERS_ALIGNMENTPARSER_H
 
 #include "utils/Types.h"
-
-#include <boost/noncopyable.hpp>
+#include "utils/Noncopyable.hpp"
 
 #include <memory>
 #include <iostream>
@@ -13,7 +12,7 @@
 namespace rufus
 {
 
-	class AlignmentParser : private boost::noncopyable
+	class AlignmentParser : private Noncopyable
 	{
 	public:
 		static inline bool ParseAlignment(const char* alignment, size_t kmerIterations, std::vector< InternalKmer >& kmers)

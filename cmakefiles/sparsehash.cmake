@@ -30,8 +30,8 @@ SET(SPARSEHASH_PROJECT sparsehash_project CACHE INTERNAL "sparsehash project nam
 SET(SPARSEHASH_DIR ${CMAKE_BINARY_DIR}/externals/sparsehash CACHE INTERNAL "sparsehash project directory")
 SET(SPARSEHASH_LIB)
 ExternalProject_Add(${SPARSEHASH_PROJECT}
-	GIT_REPOSITORY https://github.com/dillonl/sparsehash.git
-	GIT_TAG "master"
+	GIT_REPOSITORY https://github.com/sparsehash/sparsehash.git
+	GIT_TAG 804c039c10af1c7a130422735ef7cbf4a7bf2663
 	INSTALL_COMMAND ""
     SOURCE_DIR ${SPARSEHASH_DIR}
 	CONFIGURE_COMMAND ./configure --prefix=${SPARSEHASH_DIR}

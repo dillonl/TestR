@@ -20,7 +20,8 @@ include_directories(
   ${GTEST_INCLUDE}
   ${GTEST_INCLUDE}/include
   ${SCI_BOOST_INCLUDE}
-  ${SPARSEHASH_INCLUDE_DIR})
+  ${SPARSEHASH_INCLUDE_DIR}
+  ${CONCURRENTQUEUE_INCLUDE_DIR})
 
 set(Boost_USE_MULTITHREADED ON)
 
@@ -36,7 +37,7 @@ add_executable(rufus_tests
   ${RUFUS_TEST_SOURCES}
 )
 
-add_dependencies(rufus_tests ${BAMTOOLS_PROJECT} ${JELLYFISH_PROJECT} ${BWA_PROJECT} Boost_external ${GTEST_PROJECT} ${SPARSEHASH_PROJECT})
+add_dependencies(rufus_tests ${BAMTOOLS_PROJECT} ${JELLYFISH_PROJECT} ${BWA_PROJECT} Boost_external ${GTEST_PROJECT} ${SPARSEHASH_PROJECT} ${CONCURRENTQUEUE})
 
 target_link_libraries(rufus_tests
 	${BAMTOOLS_LIB}

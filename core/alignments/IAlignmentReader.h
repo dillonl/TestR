@@ -2,14 +2,13 @@
 #define RUFUS_ALIGNMENTS_IALIGNMENTREADER_HPP
 
 #include "containers/KmerSetManager.hpp"
-
-#include <boost/noncopyable.hpp>
+#include "utils/Noncopyable.hpp"
 
 #include <memory>
 
 namespace rufus
 {
-	class IAlignmentReader : private boost::noncopyable
+	class IAlignmentReader : private Noncopyable
 	{
 	public:
 		typedef std::shared_ptr< IAlignmentReader > SharedPtr;

@@ -24,15 +24,22 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-include(ExternalProject)
+# Setting up external library concurrentqueue
 
-include(Bamtools.cmake)
-include(concurrentqueue.cmake)
-include(Jellyfish.cmake)
-include(fastahack.cmake)
-include(zlib.cmake)
-include(bwa.cmake)
-include(Boost.cmake)
-include(gtest.cmake)
-include(sparsehash.cmake)
+SET(CONCURRENTQUEUE_PROJECT concurrentqueue_project CACHE INTERNAL "concurrentqueue project name")
+SET(CONCURRENTQUEUE_DIR ${CMAKE_BINARY_DIR}/externals/concurrentqueue CACHE INTERNAL "concurrentqueue project directory")
+SET(CONCURRENTQUEUE_LIB)
+ExternalProject_Add(${CONCURRENTQUEUE_PROJECT}
+	GIT_REPOSITORY https://github.com/cameron314/concurrentqueue.git
+	GIT_TAG 153525facf71f5a06118826677bdafb54b58f5f1
+	SOURCE_DIR ${CONCURRENTQUEUE_DIR}
+	INSTALL_COMMAND ""
+	BUILD_COMMAND ""
+	CONFIGURE_COMMAND ""
+)
+
+ExternalProject_Get_Property(${CONCURRENTQUEUE_PROJECT} SOURCE_DIR)
+SET(CONCURRENTQUEUE_INCLUDE_DIR ${SOURCE_DIR} CACHE INTERNAL "concurrentqueue Include")
+
+
 
