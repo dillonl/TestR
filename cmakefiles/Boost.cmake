@@ -78,6 +78,7 @@ ExternalProject_Add(Boost_external
   GIT_TAG ${boost_GIT_TAG}
   BUILD_IN_SOURCE ON
   PATCH_COMMAND ""
+  UPDATE_COMMAND ""
   INSTALL_COMMAND ""
   PREFIX ${BOOST_DIR}
   CMAKE_CACHE_ARGS
