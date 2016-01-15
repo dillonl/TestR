@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "config/DataPaths.h"
+#include "BamAlignmentReaderTests.hpp"
 #include "AlignmentParserTests.hpp"
 #include "SparseKmerSetTests.hpp"
 

@@ -3,14 +3,15 @@
 
 #include "KmerHash.hpp"
 #include "utils/Types.h"
-#include "utils/Noncopyable.hpp"
 
 #include <memory>
 #include <unordered_set>
 
+#include <boost/noncopyable.hpp>
+
 namespace rufus
 {
-	class KmerSet : private Noncopyable
+	class KmerSet : private boost::noncopyable
 	{
 	public:
 		typedef std::shared_ptr< KmerSet > SharedPtr;

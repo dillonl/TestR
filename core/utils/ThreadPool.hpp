@@ -10,7 +10,6 @@
 #include <future>
 #include <functional>
 #include <stdexcept>
-// #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 
 namespace rufus
@@ -19,10 +18,18 @@ namespace rufus
     class ThreadPool : private boost::noncopyable
     {
 	public:
-		static ThreadPool* Instance()
+		typedef std::shared_ptr< ThreadPool > SharedPtr;
+		ThreadPool() :
+			m_thread_count(std::thread::hardware_concurrency() * 2),
+			m_stopped(false)
 		{
-			static ThreadPool* s_threadpool = new ThreadPool(); // lazy initialization
-			return s_threadpool;
+			// init();
+			start();
+		}
+
+		~ThreadPool()
+		{
+			stop();
 		}
 
 		void joinAll()
@@ -43,8 +50,10 @@ namespace rufus
 
 		void stop()
 		{
+			executeStoppingFunctions();
 			{
 				std::unique_lock<std::mutex> lock(m_tasks_mutex);
+				if (m_stopped) { return; } // only do this s we haven't stopped
 				this->m_stopped = true;
 			}
 			this->m_condition.notify_all();
@@ -89,18 +98,20 @@ namespace rufus
 			return this->m_tasks.size();
 		}
 
-	private:
-
-		ThreadPool() :
-			m_thread_count(std::thread::hardware_concurrency() * 2),
-			m_stopped(false)
+		void registerStoppingFunction(std::function< void() > funct)
 		{
-			init();
+			// std::cout << "function registered" << std::endl;
+			m_stopping_functions.emplace_back(funct);
 		}
 
-		~ThreadPool()
+	private:
+
+		void executeStoppingFunctions()
 		{
-			stop();
+			for (auto funct : m_stopping_functions)
+			{
+				funct();
+			}
 		}
 
 		void init()
@@ -117,7 +128,10 @@ namespace rufus
 								std::unique_lock< std::mutex > lock(this->m_tasks_mutex);
 								this->m_condition.wait(lock,
 													   [this]{ return this->m_stopped || !this->m_tasks.empty(); });
-								if (this->m_stopped && this->m_tasks.empty()) { return; }
+								if (this->m_stopped && this->m_tasks.empty())
+								{
+									return;
+								}
 								task = std::move(this->m_tasks.front());
 								this->m_tasks.pop();
 							}
@@ -131,6 +145,7 @@ namespace rufus
 		static ThreadPool* s_threadpool;
 		std::vector< std::thread > m_workers;
 		std::queue< std::function< void() > > m_tasks;
+		std::vector< std::function< void() > > m_stopping_functions;
 
 		std::mutex m_tasks_mutex;
 		std::condition_variable m_condition;

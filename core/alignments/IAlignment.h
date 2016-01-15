@@ -8,12 +8,13 @@
 #include <string>
 
 #include "utils/Types.h"
-#include "utils/Noncopyable.hpp"
+
+#include <boost/noncopyable.hpp>
 
 namespace rufus
 {
 
-	class IAlignment : private Noncopyable
+	class IAlignment : private boost::noncopyable
 	{
 	public:
 		typedef std::shared_ptr< IAlignment > SharedPtr;

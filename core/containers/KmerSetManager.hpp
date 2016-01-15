@@ -14,21 +14,33 @@
 
 #include <concurrentqueue.h>
 
+#include <boost/noncopyable.hpp>
+
 namespace rufus
 {
-	class KmerSetManager : private boost::noncopyable
+	class KmerSetManager : private boost::noncopyable, public std::enable_shared_from_this< KmerSetManager >
 	{
 	public:
 		typedef std::shared_ptr< KmerSetManager > SharedPtr;
-		KmerSetManager() : m_kmer_queue(0), m_stopped(false)
+		KmerSetManager(ThreadPool::SharedPtr threadPoolPtr) :
+			m_kmer_queue(0),
+			m_stopped(false),
+			m_thread_pool(threadPoolPtr)
 		{
 			m_kmer_set = std::make_shared< SparseKmerSet >();
 			init();
+			m_thread_pool->registerStoppingFunction([&]()
+													{
+														shared_from_this()->stop();
+													});
 		}
 
 		~KmerSetManager()
 		{
-			stop();
+			if (!m_stopped)
+			{
+				stop();
+			}
 		}
 
 		inline void addKmer(InternalKmer internalKmer)
@@ -42,6 +54,10 @@ namespace rufus
 
 		void stop()
 		{
+			// std::cout << "stopping kmer 1" << std::endl;
+			// std::unique_lock< std::mutex > lock(this->m_queue_lock);
+			if (m_stopped) { return; }
+			// std::cout << "stopping kmer 2 " << std::endl;
 			m_stopped = true;
 			this->m_condition.notify_one();
 		}
@@ -59,24 +75,19 @@ namespace rufus
 
 		void start()
 		{
-			ThreadPool::Instance()->enqueue([this]()
+			m_thread_pool->enqueue([this]()
 			{
 				auto internalKmer = 0;
 				for (;;)
 				{
 					std::unique_lock< std::mutex > lock(this->m_queue_lock);
-					// std::cout << "waiting" << std::endl;
 					this->m_condition.wait(lock, [this] { return this->m_stopped || (this->m_kmer_queue.size_approx() > 0); });
-					// std::cout << "done waiting" << std::endl;
 					if (this->m_stopped && (this->m_kmer_queue.size_approx() == 0)) { return; }
 					while (this->m_kmer_queue.size_approx() > 0)
 					{
-						// std::cout << "getting from queue: " << internalKmer << std::endl;
 						if (m_kmer_queue.try_dequeue(internalKmer))
 						{
-							// std::cout << "got from queue1: " << internalKmer << std::endl;
 							m_kmer_set->addKmer(internalKmer);
-							// std::cout << "got from queue2" << std::endl;
 						}
 					}
 				}
@@ -88,9 +99,10 @@ namespace rufus
 
 		std::mutex m_queue_lock;
 		std::condition_variable m_condition;
-		bool m_stopped;
+		std::atomic< bool > m_stopped;
 
 		SparseKmerSet::SharedPtr m_kmer_set;
+		ThreadPool::SharedPtr m_thread_pool;
 
 	};
 }

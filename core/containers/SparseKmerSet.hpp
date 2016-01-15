@@ -2,7 +2,6 @@
 #define CORE_CONTAINERS_SPARSEKMERSET_HPP
 
 #include "KmerHash.hpp"
-#include "utils/Noncopyable.hpp"
 
 #include "utils/Types.h"
 
@@ -10,10 +9,12 @@
 
 #include <google/sparse_hash_set>
 
+#include <boost/noncopyable.hpp>
+
 namespace rufus
 {
 
-	class SparseKmerSet : private Noncopyable
+	class SparseKmerSet : private boost::noncopyable
 	{
 	public:
 		typedef std::shared_ptr< SparseKmerSet > SharedPtr;

@@ -5,23 +5,26 @@
 #include "api/BamAlignment.h"
 
 #include "IAlignmentReader.h"
-#include "utils/Noncopyable.hpp"
+#include "containers/KmerSetManager.hpp"
+
+#include <boost/noncopyable.hpp>
 
 namespace rufus
 {
-	class BamAlignmentReader : private Noncopyable
+	class BamAlignmentReader : private boost::noncopyable
 	{
 	public:
         typedef std::shared_ptr< BamAlignmentReader > SharedPtr;
-        BamAlignmentReader(const std::string& filePath, const int regionID, KmerSetManager::SharedPtr kmerSetManager);
+        BamAlignmentReader(const std::string& filePath, const int regionID);
 		~BamAlignmentReader();
 
 		void processAllReadsInRegion(KmerSetManager::SharedPtr kmerSetManager);
 
+		static std::vector< int > getAllRegionsInBam(const std::string& filePath);
+
 	private:
 		std::string m_file_path;
 		int m_region_id;
-		KmerSetManager::SharedPtr m_kmer_set_manager;
         BamTools::BamReader m_bam_reader;
 	};
 }

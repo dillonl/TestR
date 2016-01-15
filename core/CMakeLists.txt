@@ -17,11 +17,12 @@ set(RUFUS_ALIGNMENTS_SOURCES
   alignments/BamAlignmentReader.cpp
   )
 
-SET(CORE_LIB rufus_core CACHE STRING "THE CORE LIBRARY") #add rufus_core and rufus_utils to the list of core libs
-
-add_library(${CORE_LIB}
+add_library(rufus_core
   ${RUFUS_UTIL_SOURCES}
   ${RUFUS_ALIGNMENTS_SOURCES}
   )
+
+SET(CORE_LIB rufus_core CACHE STRING "THE CORE LIBRARY") #add rufus_core and rufus_utils to the list of core libs
+
 
 add_dependencies(${CORE_LIB} ${BAMTOOLS_PROJECT} ${JELLYFISH_PROJECT} ${BWA_PROJECT} Boost_external ${GTEST_PROJECT} ${SPARSEHASH_PROJECT} ${CONCURRENTQUEUE_PROJECT})
