@@ -4,6 +4,7 @@
 #include "utils/ThreadPool.hpp"
 
 #include <limits>
+#include <cstdlib>
 
 namespace rufus
 {
@@ -69,6 +70,7 @@ namespace rufus
 
 	void BamAlignmentReader::processReads(uint32_t startPosition, uint32_t endPosition, SparseKmerSet::SharedPtr kmerSetPtr)
 	{
+		int seed = rand() % 50000 + 20000;
 		static std::mutex lock;
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
@@ -92,7 +94,7 @@ namespace rufus
 			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, kmerCollection + kmerCount))
 			{
 				kmerCount += kmersNumber;
-				if (kmerCount > 50000)
+				if (kmerCount > seed)
 				{
 					std::lock_guard< std::mutex > guard(lock);
 					for (auto i = 0; i < kmerCount; ++i)
