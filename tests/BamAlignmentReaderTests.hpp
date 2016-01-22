@@ -32,7 +32,6 @@ namespace
 		kmerSetManager->stopAndJoin();
 	}
 
-	/*
 	TEST(BamAlignmentReaderTest, GetAllAlignmentsInRegion2)
 	{
 		KmerSetManager::SharedPtr kmerSetManager = std::make_shared< KmerSetManager >();
@@ -46,7 +45,6 @@ namespace
 		}
 		kmerSetManager->stopAndJoin();
 	}
-	*/
 }
 
 
