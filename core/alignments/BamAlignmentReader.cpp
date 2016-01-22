@@ -52,7 +52,6 @@ namespace rufus
 
 		auto bamAlignmentPtr = std::make_shared< BamTools::BamAlignment >();
 		std::vector< InternalKmer > internalKmers;
-		/*
 		while(this->m_bam_reader.GetNextAlignment(*bamAlignmentPtr))
 		{
 			// std::cout << "alignment gotten!" << std::endl;
@@ -72,7 +71,6 @@ namespace rufus
 				// if (counter > 500) { break; }
 			}
 		}
-		*/
 		this->m_bam_reader.Close();
 		std::cout << "total count: " << counter << std::endl;
 	}
