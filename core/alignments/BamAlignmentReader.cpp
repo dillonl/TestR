@@ -1,6 +1,7 @@
 #include "BamAlignmentReader.h"
 
 #include "parsers/AlignmentParser.hpp"
+#include "utils/ThreadPool.hpp"
 
 #include <limits>
 
@@ -35,43 +36,67 @@ namespace rufus
 
 	void BamAlignmentReader::processAllReadsInRegion(KmerSetManager::SharedPtr kmerSetManager)
 	{
+		ThreadPool tp;
 		uint32_t counter = 0;
 		std::cout << "path: " << this->m_file_path << " " << INT_MAX << std::endl;
-		if (!this->m_bam_reader.Open(this->m_file_path))
+		BamTools::BamReader bamReader;
+		if (!bamReader.Open(this->m_file_path))
 		{
 			throw "Unable to open bam file";
 		}
-		this->m_bam_reader.LocateIndex();
-		std::cout << "path: " << std::endl;
-		// this->m_bam_reader.SetRegion(this->m_region_id, 0, this->m_region_id, std::numeric_limits< int >::max());
-		auto referenceData = m_bam_reader.GetReferenceData();
+		bamReader.LocateIndex();
+		auto referenceData = bamReader.GetReferenceData();
+		bamReader.Close();
 		int32_t lastPosition = referenceData[this->m_region_id].RefLength;
-		std::cout << "position: " << lastPosition << std::endl;
-		this->m_bam_reader.SetRegion(this->m_region_id, 0, this->m_region_id, lastPosition);
-		std::cout << "region set" << std::endl;
+		uint32_t intervalSize = 1000000;
+		uint32_t currentPosition = 0;
+		std::vector< std::shared_ptr< std::future< void > > > futureFunctions;
+		while (currentPosition < lastPosition)
+		{
+			uint32_t tmpPosition = currentPosition + intervalSize - 1;
+			uint32_t nextPosition = (tmpPosition > lastPosition) ? lastPosition : tmpPosition;
+			auto funct = std::bind(&BamAlignmentReader::processReads, this, currentPosition, nextPosition, kmerSetManager);
+			auto futureFunct = tp.enqueue(funct);
+			futureFunctions.emplace_back(futureFunct);
+			currentPosition += intervalSize;
+		}
+		for (auto& futureFunct : futureFunctions)
+		{
+			futureFunct->wait();
+		}
+		std::cout << "region finished: " << this->m_region_id << std::endl;
+	}
+
+	void BamAlignmentReader::processReads(uint32_t startPosition, uint32_t endPosition, KmerSetManager::SharedPtr kmerSetManager)
+	{
+		ThreadPool tp;
+		uint32_t counter = 0;
+		BamTools::BamReader bamReader;
+		if (!bamReader.Open(this->m_file_path))
+		{
+			throw "Unable to open bam file";
+		}
+		bamReader.LocateIndex();
+		bamReader.SetRegion(this->m_region_id, startPosition, this->m_region_id, endPosition);
 
 		auto bamAlignmentPtr = std::make_shared< BamTools::BamAlignment >();
 		std::vector< InternalKmer > internalKmers;
-		while(this->m_bam_reader.GetNextAlignment(*bamAlignmentPtr))
+		while(bamReader.GetNextAlignment(*bamAlignmentPtr))
 		{
-			// std::cout << "alignment gotten!" << std::endl;
-			if (bamAlignmentPtr->RefID != this->m_region_id) { break; }
+			if (bamAlignmentPtr->Position < startPosition) { continue; }
 			auto kmersNumber = (bamAlignmentPtr->Length - KMER_SIZE);
 			if (internalKmers.size() < kmersNumber) { internalKmers.resize(kmersNumber); } // resize if necessary
 			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, internalKmers))
 			{
-				// std::cout << "alignment parsed!" << std::endl;
 				for (auto i = 0; i < kmersNumber; ++i) // use the actual kmersNumber, in case the size of internalKmers changes, this way you don't accidentally over count
 				{
 					++counter;
-					// std::cout << "adding kmer!" << std::endl;
 					kmerSetManager->addKmer(internalKmers[i]);
-					// std::cout << "kmer added!" << std::endl;
 				}
-				// if (counter > 500) { break; }
 			}
 		}
-		this->m_bam_reader.Close();
-		std::cout << "total count: " << counter << std::endl;
+		bamReader.Close();
+
+		std::cout << "total count: " << counter << ", " << this->m_region_id << std::endl;
 	}
 }

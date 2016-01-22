@@ -18,7 +18,7 @@ namespace rufus
 	public:
 		static inline bool ParseAlignment(const char* alignment, size_t kmerIterations, std::vector< InternalKmer >& kmers)
 		{
-			for (auto i = 0; i <= kmerIterations; ++i)
+			for (auto i = 0; i < kmerIterations; ++i)
 			{
 				InternalKmer internalKmer = 0; // we must guarentee internalKmer is zero
 				bool validKmer = true;

@@ -23,9 +23,10 @@ namespace rufus
 		static std::vector< int > getAllRegionsInBam(const std::string& filePath);
 
 	private:
+		void processReads(uint32_t startPosition, uint32_t endPosition, KmerSetManager::SharedPtr kmerSetManager);
+
 		std::string m_file_path;
 		int m_region_id;
-        BamTools::BamReader m_bam_reader;
 	};
 }
 
