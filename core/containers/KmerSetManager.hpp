@@ -22,17 +22,12 @@ namespace rufus
 	{
 	public:
 		typedef std::shared_ptr< KmerSetManager > SharedPtr;
-		KmerSetManager(ThreadPool::SharedPtr threadPoolPtr) :
+		KmerSetManager() :
 			m_kmer_queue(0),
-			m_stopped(false),
-			m_thread_pool(threadPoolPtr)
+			m_stopped(false)
 		{
 			m_kmer_set = std::make_shared< SparseKmerSet >();
-			init();
-			m_thread_pool->registerStoppingFunction([&]()
-													{
-														shared_from_this()->stop();
-													});
+			start();
 		}
 
 		~KmerSetManager()
@@ -62,36 +57,40 @@ namespace rufus
 			this->m_condition.notify_one();
 		}
 
+		void stopAndJoin()
+		{
+			stop();
+			this->m_thread_ptr->join();
+		}
+
 		SparseKmerSet::SharedPtr getKmerSet()
 		{
 			return m_kmer_set;
 		}
 
 	private:
-		void init()
-		{
-			start();
-		}
 
 		void start()
 		{
-			m_thread_pool->enqueue([this]()
+			this->m_thread_ptr = std::make_shared< std::thread >(&KmerSetManager::kmerQueueLoop, this);
+		}
+
+		void kmerQueueLoop()
+		{
+			auto internalKmer = 0;
+			for (;;)
 			{
-				auto internalKmer = 0;
-				for (;;)
+				std::unique_lock< std::mutex > lock(this->m_queue_lock);
+				this->m_condition.wait(lock, [this] { return this->m_stopped || (this->m_kmer_queue.size_approx() > 0); });
+				if (this->m_stopped && (this->m_kmer_queue.size_approx() == 0)) { return; }
+				while (this->m_kmer_queue.size_approx() > 0)
 				{
-					std::unique_lock< std::mutex > lock(this->m_queue_lock);
-					this->m_condition.wait(lock, [this] { return this->m_stopped || (this->m_kmer_queue.size_approx() > 0); });
-					if (this->m_stopped && (this->m_kmer_queue.size_approx() == 0)) { return; }
-					while (this->m_kmer_queue.size_approx() > 0)
+					if (m_kmer_queue.try_dequeue(internalKmer))
 					{
-						if (m_kmer_queue.try_dequeue(internalKmer))
-						{
-							m_kmer_set->addKmer(internalKmer);
-						}
+						m_kmer_set->addKmer(internalKmer);
 					}
 				}
-			});
+			}
 		}
 
 		// boost::lockfree::queue< InternalKmer > m_kmer_queue;
@@ -102,8 +101,7 @@ namespace rufus
 		std::atomic< bool > m_stopped;
 
 		SparseKmerSet::SharedPtr m_kmer_set;
-		ThreadPool::SharedPtr m_thread_pool;
-
+		std::shared_ptr< std::thread > m_thread_ptr;
 	};
 }
 
