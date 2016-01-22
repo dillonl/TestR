@@ -18,12 +18,12 @@ namespace rufus
         BamAlignmentReader(const std::string& filePath, const int regionID);
 		~BamAlignmentReader();
 
-		void processAllReadsInRegion(KmerSetManager::SharedPtr kmerSetManager);
+		void processAllReadsInRegion(SparseKmerSet::SharedPtr kmerSetPtr);
 
 		static std::vector< int > getAllRegionsInBam(const std::string& filePath);
 
 	private:
-		void processReads(uint32_t startPosition, uint32_t endPosition, KmerSetManager::SharedPtr kmerSetManager);
+		void processReads(uint32_t startPosition, uint32_t endPosition, SparseKmerSet::SharedPtr kmerSetPtr);
 
 		std::string m_file_path;
 		int m_region_id;

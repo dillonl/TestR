@@ -16,6 +16,7 @@ namespace rufus
 	class AlignmentParser : private boost::noncopyable
 	{
 	public:
+		/*
 		static inline bool ParseAlignment(const char* alignment, size_t kmerIterations, std::vector< InternalKmer >& kmers)
 		{
 			for (auto i = 0; i < kmerIterations; ++i)
@@ -27,6 +28,19 @@ namespace rufus
 			}
 			return true;
 		}
+		*/
+
+		static inline bool ParseAlignment(const char* alignment, size_t kmerIterations, InternalKmer* kmers)
+			{
+				for (auto i = 0; i < kmerIterations; ++i)
+				{
+					InternalKmer internalKmer = 0; // we must guarentee internalKmer is zero
+					bool validKmer = true;
+					validKmer &= unroller(i, uint_< KMER_SIZE - 1 >(),  alignment, internalKmer);
+					kmers[i] = internalKmer;
+				}
+				return true;
+			}
 
 	private:
 		static const InternalKmer ShiftByOne = 1; // these need to the same as InternalKmer

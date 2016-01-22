@@ -34,7 +34,7 @@ namespace rufus
 		return regions;
 	}
 
-	void BamAlignmentReader::processAllReadsInRegion(KmerSetManager::SharedPtr kmerSetManager)
+	void BamAlignmentReader::processAllReadsInRegion(SparseKmerSet::SharedPtr kmerSetPtr)
 	{
 		ThreadPool tp;
 		uint32_t counter = 0;
@@ -55,7 +55,7 @@ namespace rufus
 		{
 			uint32_t tmpPosition = currentPosition + intervalSize - 1;
 			uint32_t nextPosition = (tmpPosition > lastPosition) ? lastPosition : tmpPosition;
-			auto funct = std::bind(&BamAlignmentReader::processReads, this, currentPosition, nextPosition, kmerSetManager);
+			auto funct = std::bind(&BamAlignmentReader::processReads, this, currentPosition, nextPosition, kmerSetPtr);
 			auto futureFunct = tp.enqueue(funct);
 			futureFunctions.emplace_back(futureFunct);
 			currentPosition += intervalSize;
@@ -67,9 +67,9 @@ namespace rufus
 		std::cout << "region finished: " << this->m_region_id << std::endl;
 	}
 
-	void BamAlignmentReader::processReads(uint32_t startPosition, uint32_t endPosition, KmerSetManager::SharedPtr kmerSetManager)
+	void BamAlignmentReader::processReads(uint32_t startPosition, uint32_t endPosition, SparseKmerSet::SharedPtr kmerSetPtr)
 	{
-		ThreadPool tp;
+		static std::mutex lock;
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
 		if (!bamReader.Open(this->m_file_path))
@@ -80,20 +80,39 @@ namespace rufus
 		bamReader.SetRegion(this->m_region_id, startPosition, this->m_region_id, endPosition);
 
 		auto bamAlignmentPtr = std::make_shared< BamTools::BamAlignment >();
-		std::vector< InternalKmer > internalKmers;
+		// std::vector< InternalKmer > internalKmers;
+		InternalKmer* kmerCollection = new InternalKmer[100000];
+		size_t kmerCount = 0;
 		while(bamReader.GetNextAlignment(*bamAlignmentPtr))
 		{
 			if (bamAlignmentPtr->Position < startPosition) { continue; }
 			auto kmersNumber = (bamAlignmentPtr->Length - KMER_SIZE);
-			if (internalKmers.size() < kmersNumber) { internalKmers.resize(kmersNumber); } // resize if necessary
-			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, internalKmers))
+			// if (internalKmers.size() < kmersNumber) { internalKmers.resize(kmersNumber); } // resize if necessary
+			// if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, internalKmers))
+			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, kmerCollection + kmerCount))
 			{
+				kmerCount += kmersNumber;
+				if (kmerCount > 50000)
+				{
+					std::lock_guard< std::mutex > guard(lock);
+					for (auto i = 0; i < kmerCount; ++i)
+					{
+						counter++;
+						kmerSetPtr->addKmer(kmerCollection[i]);
+					}
+					kmerCount = 0;
+				}
+				/*
+				// lock.lock();
 				for (auto i = 0; i < kmersNumber; ++i) // use the actual kmersNumber, in case the size of internalKmers changes, this way you don't accidentally over count
 				{
 					++counter;
-					kmerSetManager->addKmer(internalKmers[i]);
+					kmerSetPtr->addKmer(internalKmers[i]);
 				}
+				// lock.unlock();
+				*/
 			}
+
 		}
 		bamReader.Close();
 

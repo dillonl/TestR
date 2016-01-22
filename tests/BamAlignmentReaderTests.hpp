@@ -26,24 +26,26 @@ namespace
 
 		std::string path = TEST_BAM_FILE;
 		int regionID = 0;
-		KmerSetManager::SharedPtr kmerSetManager = std::make_shared< KmerSetManager >();
+		// KmerSetManager::SharedPtr kmerSetManager = std::make_shared< KmerSetManager >();
+		SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
         BamAlignmentReader reader(path, regionID);
-		reader.processAllReadsInRegion(kmerSetManager);
-		kmerSetManager->stopAndJoin();
+		reader.processAllReadsInRegion(kmerSetPtr);
+		// kmerSetManager->stopAndJoin();
 	}
 
 	TEST(BamAlignmentReaderTest, GetAllAlignmentsInRegion2)
 	{
-		KmerSetManager::SharedPtr kmerSetManager = std::make_shared< KmerSetManager >();
+		// KmerSetManager::SharedPtr kmerSetManager = std::make_shared< KmerSetManager >();
 		std::string path = "/uufs/chpc.utah.edu/common/home/marth-d1/data/WashU_serialTumors/bams/B0.bam";
 		std::vector< BamAlignmentReader::SharedPtr > readers;
 		auto regions = BamAlignmentReader::getAllRegionsInBam(path);
 		for (int i = 0; i < regions.size(); ++i)
 		{
+			SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
 			BamAlignmentReader::SharedPtr reader = std::make_shared< BamAlignmentReader >(path, regions[i]);
-			reader->processAllReadsInRegion(kmerSetManager);
+			reader->processAllReadsInRegion(kmerSetPtr);
 		}
-		kmerSetManager->stopAndJoin();
+		// kmerSetManager->stopAndJoin();
 	}
 }
 
