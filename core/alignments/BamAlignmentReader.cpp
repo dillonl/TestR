@@ -71,6 +71,7 @@ namespace rufus
 	void BamAlignmentReader::processReads(uint32_t startPosition, uint32_t endPosition, SparseKmerSet::SharedPtr kmerSetPtr)
 	{
 		int seed = rand() % 50000 + 20000;
+		std::cout << std::this_thread::get_id() << " " << seed << std::endl;
 		// static std::mutex lock;
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
