@@ -71,7 +71,7 @@ namespace rufus
 	void BamAlignmentReader::processReads(uint32_t startPosition, uint32_t endPosition, SparseKmerSet::SharedPtr kmerSetPtr)
 	{
 		int seed = rand() % 50000 + 20000;
-		static std::mutex lock;
+		// static std::mutex lock;
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
 		if (!bamReader.Open(this->m_file_path))
@@ -96,13 +96,14 @@ namespace rufus
 				kmerCount += kmersNumber;
 				if (kmerCount > seed)
 				{
-					std::lock_guard< std::mutex > guard(lock);
+					std::lock_guard< std::mutex > guard(m_lock);
 					for (auto i = 0; i < kmerCount; ++i)
 					{
 						counter++;
 						kmerSetPtr->addKmer(kmerCollection[i]);
 					}
 					kmerCount = 0;
+
 				}
 				/*
 				// lock.lock();
