@@ -28,6 +28,7 @@ namespace rufus
 		std::string m_file_path;
 		int m_region_id;
 		std::mutex m_lock;
+		/* SparseKmerSet::SharedPtr m_kmer_set_ptr; */
 	};
 }
 

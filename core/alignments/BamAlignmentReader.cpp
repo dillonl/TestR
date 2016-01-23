@@ -68,10 +68,10 @@ namespace rufus
 		std::cout << "region finished: " << this->m_region_id << std::endl;
 	}
 
-	void BamAlignmentReader::processReads(uint32_t startPosition, uint32_t endPosition, SparseKmerSet::SharedPtr kmerSetPtr)
+	void BamAlignmentReader::processReads(uint32_t startPosition, uint32_t endPosition, SparseKmerSet::SharedPtr kmerSetPtr1)
 	{
+		SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
 		int seed = rand() % 50000 + 20000;
-		std::cout << std::this_thread::get_id() << " " << seed << std::endl;
 		// static std::mutex lock;
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
@@ -97,7 +97,6 @@ namespace rufus
 				kmerCount += kmersNumber;
 				if (kmerCount > seed)
 				{
-					std::lock_guard< std::mutex > guard(m_lock);
 					for (auto i = 0; i < kmerCount; ++i)
 					{
 						counter++;
