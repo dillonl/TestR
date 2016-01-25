@@ -1,5 +1,6 @@
 #include "BamAlignmentReader.h"
 
+#include "containers/KmerSet.hpp"
 #include "parsers/AlignmentParser.hpp"
 #include "utils/ThreadPool.hpp"
 
@@ -70,7 +71,8 @@ namespace rufus
 
 	void BamAlignmentReader::processReads(uint32_t startPosition, uint32_t endPosition, SparseKmerSet::SharedPtr kmerSetPtr1)
 	{
-		SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
+		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
+		KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
 		int seed = rand() % 50000 + 20000;
 		// static std::mutex lock;
 		uint32_t counter = 0;

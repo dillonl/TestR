@@ -2,16 +2,14 @@
 #define CORE_CONTAINERS_KMERSET_HPP
 
 #include "KmerHash.hpp"
-#include "utils/Types.h"
+#include "IKmerSet.h"
 
 #include <memory>
 #include <unordered_set>
 
-#include <boost/noncopyable.hpp>
-
 namespace rufus
 {
-	class KmerSet : private boost::noncopyable
+	class KmerSet : public IKmerSet
 	{
 	public:
 		typedef std::shared_ptr< KmerSet > SharedPtr;
@@ -23,7 +21,7 @@ namespace rufus
 		{
 		}
 
-		void addKmer(InternalKmer internalKmer)
+		void addKmer(InternalKmer internalKmer) override
 		{
 			auto iter = m_kmer_set.find(internalKmer);
 			if (iter == m_kmer_set.end())
@@ -36,13 +34,13 @@ namespace rufus
 			*iterPtr = (internalKmer | ((((*iter) >> KMER_SHIFTER_SIZE) + KMER_COUNT_INC) << KMER_SHIFTER_SIZE));
 		}
 
-		uint64_t getKmerCount(InternalKmer internalKmer)
+		uint64_t getKmerCount(InternalKmer internalKmer) override
 		{
 			auto iter = m_kmer_set.find(internalKmer);
 			return (iter != m_kmer_set.end()) ? ((*iter) >> KMER_SHIFTER_SIZE) : 0;
 		}
 
-		size_t getSetSize()
+		size_t getSetSize() override
 		{
 			return m_kmer_set.size();
 		}
