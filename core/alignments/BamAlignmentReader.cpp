@@ -40,15 +40,18 @@ namespace rufus
 		uint32_t intervalSize = 1000000;
 		for (auto regionID : regionIDs)
 		{
-			int32_t regionLastPosition = referenceData[regionID].RefLength;
+			uint32_t regionLastPosition = referenceData[regionID].RefLength;
+			std::cout << "region length: " << regionLastPosition << std::endl;
 			uint32_t currentPosition = 0;
 			while (currentPosition < regionLastPosition)
 			{
-				uint32_t endPosition = ((currentPosition + intervalSize) > regionLastPosition) ? regionLastPosition : currentPosition + intervalSize;
-				if (endPosition != regionLastPosition && endPosition + 10000 > regionLastPosition) { endPosition = regionLastPosition; } // so we don't end up with small regions near the end of the bamregion
+				uint32_t positionDelta = ((currentPosition + intervalSize) > regionLastPosition) ? (regionLastPosition - currentPosition) : intervalSize - 1;
+				uint32_t endPosition = currentPosition + positionDelta;
+				// if (endPosition != regionLastPosition && endPosition + 10000 > regionLastPosition) { endPosition = regionLastPosition; } // so we don't end up with small regions near the end of the bamregion
 				auto bamRegionPtr = std::make_shared< BamRegion >(regionID, currentPosition, endPosition);
 				regionPtrs.emplace_back(bamRegionPtr);
-				currentPosition += endPosition;
+				currentPosition += positionDelta + 1;
+				// bamRegionPtr->print();
 			}
 		}
 
@@ -76,8 +79,8 @@ namespace rufus
 
 	IKmerSet::SharedPtr BamAlignmentReader::processReads(BamRegion::SharedPtr bamRegionPtr)
 	{
-		// static std::mutex lock;
-		// std::lock_guard< std::mutex > guard(lock);
+		static std::mutex lock;
+		std::lock_guard< std::mutex > guard(lock);
 		// std::cout << "locked" << std::endl;
 
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
