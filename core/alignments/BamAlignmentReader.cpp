@@ -79,8 +79,8 @@ namespace rufus
 
 	IKmerSet::SharedPtr BamAlignmentReader::processReads(BamRegion::SharedPtr bamRegionPtr)
 	{
-		static std::mutex lock;
-		std::lock_guard< std::mutex > guard(lock);
+		// static std::mutex lock;
+		// std::lock_guard< std::mutex > guard(lock);
 		// std::cout << "locked" << std::endl;
 
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
