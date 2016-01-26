@@ -103,7 +103,7 @@ namespace rufus
 		{
 			if (bamAlignmentPtr->Position < bamRegionPtr->getStartPosition()) { continue; }
 			auto kmersNumber = (bamAlignmentPtr->Length - KMER_SIZE);
-			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, &internalKmers[0]))
+			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, internalKmers))
 			// if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, kmerCollection + kmerCount))
 			{
 				for (auto i = 0; i < kmersNumber; ++i)
