@@ -13,20 +13,43 @@ namespace rufus
 {
 	class BamAlignmentReader : private boost::noncopyable
 	{
+	private:
+		class BamRegion : private boost::noncopyable
+	    {
+		public:
+			typedef std::shared_ptr< BamRegion > SharedPtr;
+		BamRegion(int regionID, int startPosition, int endPosition) :
+			m_region_id(regionID),
+				m_start_position(startPosition),
+				m_end_position(endPosition)
+				{
+				}
+
+			int getRegionID() { return this->m_region_id; }
+			int getStartPosition() { return this->m_start_position; }
+			int getEndPosition() { return this->m_end_position; }
+			void print() { std::cout << m_region_id << " " << m_start_position << " " << m_end_position << std::endl; }
+		private:
+			int m_region_id;
+			int m_start_position;
+			int m_end_position;
+		};
+
 	public:
         typedef std::shared_ptr< BamAlignmentReader > SharedPtr;
-        BamAlignmentReader(const std::string& filePath, const int regionID);
+        BamAlignmentReader(const std::string& filePath);
 		~BamAlignmentReader();
 
-		void processAllReadsInRegion(SparseKmerSet::SharedPtr kmerSetPtr);
+		void processAllReadsInBam();
+		/* void processAllReadsInRegion(SparseKmerSet::SharedPtr kmerSetPtr); */
 
-		static std::vector< int > getAllRegionsInBam(const std::string& filePath);
+		/* static std::vector< int > getAllRegionsInBam(const std::string& filePath); */
 
 	private:
-		void processReads(uint32_t startPosition, uint32_t endPosition, SparseKmerSet::SharedPtr kmerSetPtr);
+		IKmerSet::SharedPtr processReads(BamRegion::SharedPtr bamRegionPtr);
+		std::vector< BamRegion::SharedPtr > getAllSpacedOutRegions();
 
 		std::string m_file_path;
-		int m_region_id;
 		std::mutex m_lock;
 		/* SparseKmerSet::SharedPtr m_kmer_set_ptr; */
 	};

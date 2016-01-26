@@ -4,6 +4,7 @@
 #include "config/DataPaths.h"
 #include "alignments/BamAlignmentReader.h"
 #include "utils/ThreadPool.hpp"
+#include "containers/KmerSet.hpp"
 
 namespace
 {
@@ -19,34 +20,33 @@ namespace
 			ASSERT_EQ(i, regions[i]);
 		}
 		*/
+
+		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
+		// KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
+		// for (int i = 0; i < 1000000; ++i)
+		// for (int i = 0; i < 1000000000; ++i)
+		// {
+			// for (int j = 0; j < 1000; ++j)
+			// {
+				// kmerSetPtr->addKmer(i);
+			// }
+		// }
 	}
 
 	TEST(BamAlignmentReaderTest, GetAllAlignmentsInRegion)
 	{
 		/*
 		std::string path = TEST_BAM_FILE;
-		int regionID = 0;
-		// KmerSetManager::SharedPtr kmerSetManager = std::make_shared< KmerSetManager >();
-		SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
-        BamAlignmentReader reader(path, regionID);
-		reader.processAllReadsInRegion(kmerSetPtr);
-		// kmerSetManager->stopAndJoin();
+		BamAlignmentReader::SharedPtr readerPtr = std::make_shared< BamAlignmentReader >(path);
+		readerPtr->processAllReadsInBam();
 		*/
 	}
 
 	TEST(BamAlignmentReaderTest, GetAllAlignmentsInRegion2)
 	{
-		// KmerSetManager::SharedPtr kmerSetManager = std::make_shared< KmerSetManager >();
 		std::string path = "/uufs/chpc.utah.edu/common/home/marth-d1/data/WashU_serialTumors/bams/B0.bam";
-		std::vector< BamAlignmentReader::SharedPtr > readers;
-		auto regions = BamAlignmentReader::getAllRegionsInBam(path);
-		for (int i = 0; i < regions.size(); ++i)
-		{
-			SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
-			BamAlignmentReader::SharedPtr reader = std::make_shared< BamAlignmentReader >(path, regions[i]);
-			reader->processAllReadsInRegion(kmerSetPtr);
-		}
-		// kmerSetManager->stopAndJoin();
+		BamAlignmentReader::SharedPtr readerPtr = std::make_shared< BamAlignmentReader >(path);
+		readerPtr->processAllReadsInBam();
 	}
 }
 
