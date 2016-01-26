@@ -110,6 +110,7 @@ namespace rufus
 				for (auto i = 0; i < kmersNumber; ++i)
 				{
 					kmerSetPtr->addKmer(internalKmers[i]);
+                    ++counter;
 				}
 				/*
 				kmerCount += kmersNumber;
@@ -128,7 +129,8 @@ namespace rufus
 		}
 		bamReader.Close();
 
-		std::cout << "total count: " << counter << ", " << bamRegionPtr->getRegionID() << std::endl;
+		std::cout << "total count: " << counter << " ";
+        bamRegionPtr->print();
 		return kmerSetPtr;
 	}
 }
