@@ -82,7 +82,7 @@ namespace rufus
 
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
 		KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
-		int seed = 99900; //rand() % 50000 + 20000;
+		// int seed = 99900; //rand() % 50000 + 20000;
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
 		if (!bamReader.Open(this->m_file_path))
@@ -93,7 +93,7 @@ namespace rufus
 		bamReader.SetRegion(bamRegionPtr->getRegionID(), bamRegionPtr->getStartPosition(), bamRegionPtr->getRegionID(), bamRegionPtr->getEndPosition());
 
 		auto bamAlignmentPtr = std::make_shared< BamTools::BamAlignment >();
-		std::vector< InternalKmer > internalKmers(100000);
+		std::vector< InternalKmer > internalKmers(100);
 		// InternalKmer kmerCollection[10000];
 		// InternalKmer* kmerCollection = new InternalKmer(100000);
 		size_t kmerCount = 0;
@@ -106,6 +106,11 @@ namespace rufus
 			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, &internalKmers[0]))
 			// if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, kmerCollection + kmerCount))
 			{
+				for (auto i = 0; i < kmersNumber; ++i)
+				{
+					kmerSetPtr->addKmer(internalKmers[i]);
+				}
+				/*
 				kmerCount += kmersNumber;
 				if (kmerCount > seed)
 				{
@@ -117,6 +122,7 @@ namespace rufus
 					}
 					kmerCount = 0;
 				}
+				*/
 			}
 		}
 		bamReader.Close();
