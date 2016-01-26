@@ -41,7 +41,6 @@ namespace rufus
 		for (auto regionID : regionIDs)
 		{
 			uint32_t regionLastPosition = referenceData[regionID].RefLength;
-			std::cout << "region length: " << regionLastPosition << std::endl;
 			uint32_t currentPosition = 0;
 			while (currentPosition < regionLastPosition)
 			{
