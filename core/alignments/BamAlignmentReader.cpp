@@ -76,11 +76,12 @@ namespace rufus
 		while (!futureFunctions.empty())
 		{
 			auto futureFunct = futureFunctions.front();
+			futureFunctions.pop_front();
 			if (futureFunct->wait_for(std::chrono::milliseconds(100)) == std::future_status::ready)
 			{
-				futureFunctions.pop_front();
 				auto kmerSetPtr = futureFunct->get();
 			}
+			futureFunctions.emplace_back(futureFunct);
 			// futureFunct->wait();
 		}
 	}
