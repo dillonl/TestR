@@ -22,6 +22,7 @@ namespace rufus
 			static std::mutex lock;
 			std::lock_guard< std::mutex > guard(lock);
 			std::cout << "set destroyed" << std::endl;
+			m_kmer_set.erase(m_kmer_set.begin(), m_kmer_set.end());
 		}
 
 		void addKmer(InternalKmer internalKmer) override
