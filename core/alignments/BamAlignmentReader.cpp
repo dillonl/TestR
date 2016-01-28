@@ -81,7 +81,10 @@ namespace rufus
 			{
 				auto kmerSetPtr = futureFunct->get();
 			}
-			futureFunctions.emplace_back(futureFunct);
+			else
+			{
+				futureFunctions.emplace_back(futureFunct);
+			}
 			// futureFunct->wait();
 		}
 	}
