@@ -64,7 +64,7 @@ namespace rufus
 		ThreadPool tp;
 		auto spacedOutRegions = getAllSpacedOutRegions();
 		// std::vector< std::shared_ptr< std::future< IKmerSet::SharedPtr > > > futureFunctions;
-		std::deque< std::shared_ptr< std::future< IKmerSet::SharedPtr > > > futureFunctions;
+		std::deque< std::shared_ptr< std::future< std::shared_ptr< std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > > > > > futureFunctions;
 		for (auto regionPtr : spacedOutRegions)
 		{
 			// regionPtr->print();
@@ -89,13 +89,10 @@ namespace rufus
 			}
 			// futureFunct->wait();
 		}
-
-		int x = 0;
-		std::cout << "finished, press any key" << std::endl;
-		std::cin >> x;
 	}
 
-	IKmerSet::SharedPtr BamAlignmentReader::processReads(BamRegion::SharedPtr bamRegionPtr)
+	// IKmerSet::SharedPtr BamAlignmentReader::processReads(BamRegion::SharedPtr bamRegionPtr)
+	std::shared_ptr< std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > > BamAlignmentReader::processReads(BamRegion::SharedPtr bamRegionPtr)
 	{
 		// static std::mutex lock2;
 		// std::lock_guard< std::mutex > guard(lock2);
@@ -103,8 +100,8 @@ namespace rufus
 
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
 		// KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
-		KmerSet kmerSet;
-		std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > set;
+		// KmerSet kmerSet;
+		std::shared_ptr< std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > > kmerSetPtr = std::make_shared< std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > >();
 
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
@@ -134,7 +131,7 @@ namespace rufus
 				{
 					// kmerSetPtr->addKmer(internalKmers[i]);
 					// kmerSet.addKmer(internalKmers[i]);
-					set.emplace(internalKmers[i]);
+					kmerSetPtr->emplace(internalKmers[i]);
                     ++counter;
 				}
 			}
@@ -143,7 +140,7 @@ namespace rufus
 
 		std::cout << "total count: " << counter << " ";
         bamRegionPtr->print();
-		// return kmerSetPtr;
-		return nullptr;
+		return kmerSetPtr;
+		// return nullptr;
 	}
 }
