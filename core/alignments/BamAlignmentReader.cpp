@@ -72,7 +72,7 @@ namespace rufus
 			auto futureFunct = tp.enqueue(funct);
 			futureFunctions.emplace_back(futureFunct);
 			static int counter = 0;
-			if (counter++ >= 75) { break; }
+			// if (counter++ >= 75) { break; }
 		}
 		// for (auto& futureFunct : futureFunctions)
 		while (!futureFunctions.empty())
