@@ -4,6 +4,7 @@
 #include "parsers/AlignmentParser.hpp"
 #include "utils/ThreadPool.hpp"
 
+#include <deque>
 #include <limits>
 #include <cstdlib>
 
@@ -62,7 +63,8 @@ namespace rufus
 	{
 		ThreadPool tp;
 		auto spacedOutRegions = getAllSpacedOutRegions();
-		std::vector< std::shared_ptr< std::future< IKmerSet::SharedPtr > > > futureFunctions;
+		// std::vector< std::shared_ptr< std::future< IKmerSet::SharedPtr > > > futureFunctions;
+		std::deque< std::shared_ptr< std::future< IKmerSet::SharedPtr > > > futureFunctions;
 		for (auto regionPtr : spacedOutRegions)
 		{
 			// regionPtr->print();
@@ -70,16 +72,23 @@ namespace rufus
 			auto futureFunct = tp.enqueue(funct);
 			futureFunctions.emplace_back(futureFunct);
 		}
-		for (auto& futureFunct : futureFunctions)
+		// for (auto& futureFunct : futureFunctions)
+		while (!futureFunctions.empty())
 		{
-			futureFunct->wait();
+			auto futureFunct = futureFunctions.front();
+			if (futureFunct->wait_for(std::chrono::milliseconds(100)) == std::future_status::ready)
+			{
+				futureFunctions.pop_front();
+				auto kmerSetPtr = futureFunct->get();
+			}
+			// futureFunct->wait();
 		}
 	}
 
 	IKmerSet::SharedPtr BamAlignmentReader::processReads(BamRegion::SharedPtr bamRegionPtr)
 	{
-		// static std::mutex lock;
-		// std::lock_guard< std::mutex > guard(lock);
+		// static std::mutex lock2;
+		// std::lock_guard< std::mutex > guard(lock2);
 		// std::cout << "locked" << std::endl;
 
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
