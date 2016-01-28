@@ -102,8 +102,9 @@ namespace rufus
 		// std::cout << "locked" << std::endl;
 
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
-		KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
-		// int seed = 99900; //rand() % 50000 + 20000;
+		// KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
+		KmerSet kmerSet;
+
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
 		if (!bamReader.Open(this->m_file_path))
@@ -130,7 +131,8 @@ namespace rufus
 			{
 				for (auto i = 0; i < kmersNumber; ++i)
 				{
-					kmerSetPtr->addKmer(internalKmers[i]);
+					// kmerSetPtr->addKmer(internalKmers[i]);
+					kmerSet.addKmer(internalKmers[i]);
                     ++counter;
 				}
 			}
@@ -139,6 +141,7 @@ namespace rufus
 
 		std::cout << "total count: " << counter << " ";
         bamRegionPtr->print();
-		return kmerSetPtr;
+		// return kmerSetPtr;
+		return nullptr;
 	}
 }
