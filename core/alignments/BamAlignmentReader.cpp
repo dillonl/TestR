@@ -104,7 +104,7 @@ namespace rufus
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
 		// KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
 		KmerSet kmerSet;
-		std::unordered_set< InternalKmer > set;
+		std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > set;
 
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
