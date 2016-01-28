@@ -87,6 +87,10 @@ namespace rufus
 			}
 			// futureFunct->wait();
 		}
+
+		int x = 0;
+		std::cout << "finished, press any key" << std::endl;
+		std::cin >> x;
 	}
 
 	IKmerSet::SharedPtr BamAlignmentReader::processReads(BamRegion::SharedPtr bamRegionPtr)
