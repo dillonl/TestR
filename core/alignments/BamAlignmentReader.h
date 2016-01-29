@@ -8,7 +8,6 @@
 #include "containers/KmerSetManager.hpp"
 
 #include <boost/noncopyable.hpp>
-#include <unordered_set>
 
 namespace rufus
 {
@@ -18,7 +17,6 @@ namespace rufus
 		class BamRegion : private boost::noncopyable
 	    {
 		public:
-			typedef std::shared_ptr< std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > > KmerSetSharedPtr;
 			typedef std::shared_ptr< BamRegion > SharedPtr;
 		BamRegion(int regionID, int startPosition, int endPosition) :
 			m_region_id(regionID),
@@ -48,8 +46,7 @@ namespace rufus
 		/* static std::vector< int > getAllRegionsInBam(const std::string& filePath); */
 
 	private:
-		/* IKmerSet::SharedPtr processReads(BamRegion::SharedPtr bamRegionPtr); */
-		std::shared_ptr< std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > > processReads(BamRegion::SharedPtr bamRegionPtr);
+		IKmerSet::SharedPtr processReads(BamRegion::SharedPtr bamRegionPtr);
 		std::vector< BamRegion::SharedPtr > getAllSpacedOutRegions();
 
 		std::string m_file_path;
