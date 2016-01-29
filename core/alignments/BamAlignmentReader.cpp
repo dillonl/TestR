@@ -139,6 +139,11 @@ namespace rufus
 
 		std::cout << "total count: " << counter << " ";
         bamRegionPtr->print();
+
+		{
+			std::lock_guard< std::mutex > guard(m_lock);
+			m_set.insert(set.begin(), set.end());
+		}
 		// return kmerSetPtr;
 		return nullptr;
 	}
