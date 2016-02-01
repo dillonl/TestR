@@ -35,9 +35,11 @@ namespace
 
 	TEST(BamAlignmentReaderTest, GetAllAlignmentsInRegion)
 	{
+		/*
 		std::string path = TEST_BAM_FILE;
 		BamAlignmentReader::SharedPtr readerPtr = std::make_shared< BamAlignmentReader >(path);
 		readerPtr->processAllReadsInBam();
+		*/
 	}
 
 	TEST(BamAlignmentReaderTest, GetAllAlignmentsInRegion2)

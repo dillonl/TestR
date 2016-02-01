@@ -106,7 +106,7 @@ namespace rufus
 
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
 		KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
-		KmerSet kmerSet;
+		// kmerSetPtr->resize(10000);
 		// std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > set;
 		// google::dense_hash_set< InternalKmer, KmerHash, KmerKeyEqual > set;
 		// InternalKmer emptyKey(0);
@@ -146,7 +146,7 @@ namespace rufus
 		}
 		bamReader.Close();
 
-		std::cout << "total count: " << counter << " ";
+		std::cout << "total count: [" << kmerSetPtr->getSetSize() << "] " << counter << " ";
         bamRegionPtr->print();
 
 		{
