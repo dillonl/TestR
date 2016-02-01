@@ -56,6 +56,11 @@ namespace rufus
 		{
 		}
 
+		void resize(uint64_t size) override
+		{
+			m_kmer_set.resize(size);
+		}
+
 	private:
 		google::sparse_hash_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
 		InternalKmer m_bit_mask;

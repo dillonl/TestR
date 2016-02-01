@@ -16,6 +16,7 @@ namespace rufus
 		m_file_path(filePath)
 	{
 		m_kmer_set_ptr = std::make_shared< SparseKmerSet >();
+		m_kmer_set_ptr->resize(6000000000);
 	}
 
 	BamAlignmentReader::~BamAlignmentReader()

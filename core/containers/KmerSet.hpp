@@ -57,6 +57,11 @@ namespace rufus
 			}
 		}
 
+		void resize(uint64_t size) override
+		{
+			m_kmer_set.reserve(size);
+		}
+
 	private:
 		std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
 

@@ -21,6 +21,8 @@ namespace rufus
 		{
 		}
 
+
+		virtual void resize(uint64_t size) = 0;
 		virtual void addKmer(InternalKmer internalKmer) = 0;
 		virtual uint64_t getKmerCount(InternalKmer internalKmer) = 0;
 		virtual size_t getSetSize() = 0;
