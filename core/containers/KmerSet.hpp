@@ -19,10 +19,10 @@ namespace rufus
 
 		~KmerSet()
 		{
-			static std::mutex lock;
-			std::lock_guard< std::mutex > guard(lock);
-			std::cout << "set destroyed" << std::endl;
-			m_kmer_set.erase(m_kmer_set.begin(), m_kmer_set.end());
+			// static std::mutex lock;
+			// std::lock_guard< std::mutex > guard(lock);
+			// std::cout << "set destroyed" << std::endl;
+			m_kmer_set.clear();
 		}
 
 		void addKmer(InternalKmer internalKmer) override
@@ -31,8 +31,8 @@ namespace rufus
 			if (iter == m_kmer_set.end())
 			{
 				internalKmer = (internalKmer & 0x0003FFFFFFFFFFFF);
-				m_kmer_set.emplace(internalKmer);
-				iter = m_kmer_set.find(internalKmer);
+				iter = m_kmer_set.emplace(internalKmer).first;
+				// iter = m_kmer_set.find(internalKmer);
 			}
 			auto iterPtr = const_cast< InternalKmer* >(&(*iter));
 			*iterPtr = (internalKmer | ((((*iter) >> KMER_SHIFTER_SIZE) + KMER_COUNT_INC) << KMER_SHIFTER_SIZE));
@@ -47,6 +47,14 @@ namespace rufus
 		size_t getSetSize() override
 		{
 			return m_kmer_set.size();
+		}
+
+		void addAllKmersToPassedInSet(IKmerSet::SharedPtr kmerSetPtr) override
+		{
+			for (auto& internalKmer : m_kmer_set)
+			{
+				kmerSetPtr->addKmer(internalKmer);
+			}
 		}
 
 	private:

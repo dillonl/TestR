@@ -4,6 +4,8 @@
 #include "parsers/AlignmentParser.hpp"
 #include "utils/ThreadPool.hpp"
 
+#include <google/dense_hash_set>
+
 #include <deque>
 #include <limits>
 #include <cstdlib>
@@ -13,6 +15,7 @@ namespace rufus
 	BamAlignmentReader::BamAlignmentReader(const std::string& filePath) :
 		m_file_path(filePath)
 	{
+		m_kmer_set_ptr = std::make_shared< SparseKmerSet >();
 	}
 
 	BamAlignmentReader::~BamAlignmentReader()
@@ -82,6 +85,9 @@ namespace rufus
 			if (futureFunct->wait_for(std::chrono::milliseconds(100)) == std::future_status::ready)
 			{
 				auto kmerSetPtr = futureFunct->get();
+				// std::lock_guard< std::mutex > guard(m_lock);
+				// m_set.insert(set.begin(), set.end());
+ 				m_kmer_set_ptr->addAllKmersToPassedInSet(kmerSetPtr);
 			}
 			else
 			{
@@ -98,9 +104,13 @@ namespace rufus
 		// std::cout << "locked" << std::endl;
 
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
-		// KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
+		KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
 		KmerSet kmerSet;
-		std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > set;
+		// std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > set;
+		// google::dense_hash_set< InternalKmer, KmerHash, KmerKeyEqual > set;
+		// InternalKmer emptyKey(0);
+		// set.set_empty_key(emptyKey);
+		// set.clear_deleted_key();
 
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
@@ -128,9 +138,7 @@ namespace rufus
 			{
 				for (auto i = 0; i < kmersNumber; ++i)
 				{
-					// kmerSetPtr->addKmer(internalKmers[i]);
-					// kmerSet.addKmer(internalKmers[i]);
-					set.emplace(internalKmers[i]);
+					kmerSetPtr->addKmer(internalKmers[i]);
                     ++counter;
 				}
 			}
@@ -141,10 +149,9 @@ namespace rufus
         bamRegionPtr->print();
 
 		{
-			std::lock_guard< std::mutex > guard(m_lock);
-			m_set.insert(set.begin(), set.end());
+			// std::lock_guard< std::mutex > guard(m_lock);
+			// m_set.insert(set.begin(), set.end());
 		}
-		// return kmerSetPtr;
-		return nullptr;
+		return kmerSetPtr;
 	}
 }

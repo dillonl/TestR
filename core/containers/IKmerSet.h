@@ -24,6 +24,7 @@ namespace rufus
 		virtual void addKmer(InternalKmer internalKmer) = 0;
 		virtual uint64_t getKmerCount(InternalKmer internalKmer) = 0;
 		virtual size_t getSetSize() = 0;
+		virtual void addAllKmersToPassedInSet(IKmerSet::SharedPtr kmerSetPtr) = 0;
 	};
 }
 

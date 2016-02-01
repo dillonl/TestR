@@ -25,6 +25,7 @@ namespace rufus
 
 		~SparseKmerSet()
 		{
+			m_kmer_set.clear();
 		}
 
 		void addKmer(InternalKmer internalKmer) override
@@ -49,6 +50,10 @@ namespace rufus
 		size_t getSetSize() override
 		{
 			return m_kmer_set.size();
+		}
+
+		void addAllKmersToPassedInSet(IKmerSet::SharedPtr kmerSetPtr) override
+		{
 		}
 
 	private:
