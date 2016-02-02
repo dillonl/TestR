@@ -55,7 +55,6 @@ namespace rufus
 		std::mutex m_lock;
 		/* std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_set; */
 		IKmerSet::SharedPtr m_kmer_set_ptr;
-		std::mutex m_kmer_set_lock;
 	};
 }
 
