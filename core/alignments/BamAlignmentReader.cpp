@@ -105,13 +105,8 @@ namespace rufus
 		// std::cout << "locked" << std::endl;
 
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
-		KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
-		kmerSetPtr->resize(11000000);
-		// std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > set;
-		// google::dense_hash_set< InternalKmer, KmerHash, KmerKeyEqual > set;
-		// InternalKmer emptyKey(0);
-		// set.set_empty_key(emptyKey);
-		// set.clear_deleted_key();
+		// KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
+		// kmerSetPtr->resize(11000000);
 
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
@@ -139,20 +134,23 @@ namespace rufus
 			{
 				for (auto i = 0; i < kmersNumber; ++i)
 				{
-					kmerSetPtr->addKmer(internalKmers[i]);
+					// kmerSetPtr->addKmer(internalKmers[i]);
+					m_kmer_set_ptr->addKmer(internalKmers[i]);
                     ++counter;
 				}
 			}
 		}
 		bamReader.Close();
 
-		std::cout << "total count: [" << kmerSetPtr->getSetSize() << "] " << counter << " ";
+		// std::cout << "total count: [" << kmerSetPtr->getSetSize() << "] " << counter << " ";
+		std::cout << "total count: " << counter << " ";
         bamRegionPtr->print();
 
 		{
 			// std::lock_guard< std::mutex > guard(m_lock);
 			// m_set.insert(set.begin(), set.end());
 		}
-		return kmerSetPtr;
+		// return kmerSetPtr;
+		return nullptr;
 	}
 }

@@ -27,6 +27,7 @@ namespace rufus
 
 		void addKmer(InternalKmer internalKmer) override
 		{
+			m_kmer_set_lock.lock();
 			auto iter = m_kmer_set.find(internalKmer);
 			if (iter == m_kmer_set.end())
 			{
@@ -36,6 +37,7 @@ namespace rufus
 			}
 			auto iterPtr = const_cast< InternalKmer* >(&(*iter));
 			*iterPtr = (internalKmer | ((((*iter) >> KMER_SHIFTER_SIZE) + KMER_COUNT_INC) << KMER_SHIFTER_SIZE));
+			m_kmer_set_lock.unlock();
 		}
 
 		uint64_t getKmerCount(InternalKmer internalKmer) override
@@ -64,7 +66,7 @@ namespace rufus
 
 	private:
 		std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
-
+		std::mutex m_kmer_set_lock;
 	};
 }
 
