@@ -132,12 +132,14 @@ namespace rufus
 			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, internalKmers))
 			// if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, kmerCollection + kmerCount))
 			{
+				m_kmer_set_lock.lock();
 				for (auto i = 0; i < kmersNumber; ++i)
 				{
 					// kmerSetPtr->addKmer(internalKmers[i]);
 					m_kmer_set_ptr->addKmer(internalKmers[i]);
                     ++counter;
 				}
+				m_kmer_set_lock.unlock();
 			}
 		}
 		bamReader.Close();
