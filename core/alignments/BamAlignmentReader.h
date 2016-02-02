@@ -54,7 +54,7 @@ namespace rufus
 		std::string m_file_path;
 		std::mutex m_lock;
 		/* std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_set; */
-		SparseKmerSet::SharedPtr m_kmer_set_ptr;
+		IKmerSet::SharedPtr m_kmer_set_ptr;
 	};
 }
 

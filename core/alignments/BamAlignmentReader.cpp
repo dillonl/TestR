@@ -15,7 +15,7 @@ namespace rufus
 	BamAlignmentReader::BamAlignmentReader(const std::string& filePath) :
 		m_file_path(filePath)
 	{
-		m_kmer_set_ptr = std::make_shared< SparseKmerSet >();
+		m_kmer_set_ptr = std::make_shared< KmerSet >();
 		m_kmer_set_ptr->resize(6000000000);
 	}
 
@@ -104,8 +104,8 @@ namespace rufus
 		// std::lock_guard< std::mutex > guard(lock2);
 		// std::cout << "locked" << std::endl;
 
-		SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
-		// KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
+		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
+		KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
 		kmerSetPtr->resize(11000000);
 		// std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > set;
 		// google::dense_hash_set< InternalKmer, KmerHash, KmerKeyEqual > set;
