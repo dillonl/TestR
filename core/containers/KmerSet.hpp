@@ -64,7 +64,6 @@ namespace rufus
 
 	private:
 		std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
-
 	};
 }
 

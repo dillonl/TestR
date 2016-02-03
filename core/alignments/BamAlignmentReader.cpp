@@ -40,7 +40,7 @@ namespace rufus
 		auto referenceData = bamReader.GetReferenceData();
 		// get the region pointers
 		std::vector< BamRegion::SharedPtr > regionPtrs;
-		uint32_t intervalSize = 1000000;
+		uint32_t intervalSize = 250000;
 		for (auto regionID : regionIDs)
 		{
 			uint32_t regionLastPosition = referenceData[regionID].RefLength;
@@ -111,6 +111,8 @@ namespace rufus
 		// InternalKmer emptyKey(0);
 		// set.set_empty_key(emptyKey);
 		// set.clear_deleted_key();
+		// std::vector< InternalKmer > kmerContainer(33804365);
+		std::vector< InternalKmer > kmerContainer(30000000);
 
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
@@ -133,6 +135,7 @@ namespace rufus
 			if (bamAlignmentPtr->Position < bamRegionPtr->getStartPosition()) { continue; }
 			auto kmersNumber = (bamAlignmentPtr->Length - KMER_SIZE);
 			if (kmersNumber > internalKmers.size()) { internalKmers.resize(kmersNumber); }
+			if (kmerContainer.size() < counter + kmersNumber) { kmerContainer.resize(kmerContainer.size() * 2); }
 			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, internalKmers))
 			// if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, kmerCollection + kmerCount))
 			{
@@ -140,6 +143,8 @@ namespace rufus
 				{
 					m_kmer_set_ptr->addKmer(internalKmers[i]);
 					// kmerSetPtr->addKmer(internalKmers[i]);
+					// kmerSetPtr->addKmer(internalKmers[i]);
+					// m_kmer_set_ptr->addKmer(internalKmers[i]);
                     ++counter;
 				}
 			}
@@ -149,10 +154,6 @@ namespace rufus
 		std::cout << "total count: " << counter << " ";
         bamRegionPtr->print();
 
-		{
-			// std::lock_guard< std::mutex > guard(m_lock);
-			// m_set.insert(set.begin(), set.end());
-		}
 		// return kmerSetPtr;
 		return nullptr;
 	}
