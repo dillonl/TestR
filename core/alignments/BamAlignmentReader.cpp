@@ -42,7 +42,7 @@ namespace rufus
 		auto referenceData = bamReader.GetReferenceData();
 		// get the region pointers
 		std::vector< BamRegion::SharedPtr > regionPtrs;
-		uint32_t intervalSize = 1000000;
+		uint32_t intervalSize = 500000;
 		for (auto regionID : regionIDs)
 		{
 			uint32_t regionLastPosition = referenceData[regionID].RefLength;
@@ -159,6 +159,7 @@ namespace rufus
 			// std::lock_guard< std::mutex > guard(m_lock);
 			// m_set.insert(set.begin(), set.end());
 		m_kmer_set_lock.unlock();
+		kmerContainer.clear();
 		// return kmerSetPtr;
 		return nullptr;
 	}
