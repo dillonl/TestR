@@ -85,10 +85,11 @@ namespace rufus
 			futureFunctions.pop_front();
 			if (futureFunct->wait_for(std::chrono::milliseconds(100)) == std::future_status::ready)
 			{
-				auto kmerSetPtr = futureFunct->get();
+				continue;
+				// auto kmerSetPtr = futureFunct->get();
 				// std::lock_guard< std::mutex > guard(m_lock);
 				// m_set.insert(set.begin(), set.end());
- 				m_kmer_set_ptr->addAllKmersToPassedInSet(kmerSetPtr);
+ 				// m_kmer_set_ptr->addAllKmersToPassedInSet(kmerSetPtr);
 			}
 			else
 			{
