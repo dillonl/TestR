@@ -4,8 +4,6 @@
 #include "parsers/AlignmentParser.hpp"
 #include "utils/ThreadPool.hpp"
 
-#include <google/dense_hash_set>
-
 #include <deque>
 #include <limits>
 #include <cstdlib>
@@ -15,7 +13,7 @@ namespace rufus
 	BamAlignmentReader::BamAlignmentReader(const std::string& filePath) :
 		m_file_path(filePath)
 	{
-		m_kmer_set_ptr = std::make_shared< SparseKmerSet >();
+		m_kmer_set_ptr = std::make_shared< MintomicKmerSet >();
 		m_kmer_set_ptr->resize(6000000000);
 	}
 
@@ -85,10 +83,11 @@ namespace rufus
 			futureFunctions.pop_front();
 			if (futureFunct->wait_for(std::chrono::milliseconds(100)) == std::future_status::ready)
 			{
-				auto kmerSetPtr = futureFunct->get();
+				// auto kmerSetPtr = futureFunct->get();
 				// std::lock_guard< std::mutex > guard(m_lock);
 				// m_set.insert(set.begin(), set.end());
- 				m_kmer_set_ptr->addAllKmersToPassedInSet(kmerSetPtr);
+ 				// m_kmer_set_ptr->addAllKmersToPassedInSet(kmerSetPtr);
+				continue;
 			}
 			else
 			{
@@ -104,9 +103,9 @@ namespace rufus
 		// std::lock_guard< std::mutex > guard(lock2);
 		// std::cout << "locked" << std::endl;
 
-		SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
+		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
 		// KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
-		kmerSetPtr->resize(11000000);
+		// kmerSetPtr->resize(11000000);
 		// std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > set;
 		// google::dense_hash_set< InternalKmer, KmerHash, KmerKeyEqual > set;
 		// InternalKmer emptyKey(0);
@@ -139,20 +138,22 @@ namespace rufus
 			{
 				for (auto i = 0; i < kmersNumber; ++i)
 				{
-					kmerSetPtr->addKmer(internalKmers[i]);
+					m_kmer_set_ptr->addKmer(internalKmers[i]);
+					// kmerSetPtr->addKmer(internalKmers[i]);
                     ++counter;
 				}
 			}
 		}
 		bamReader.Close();
 
-		std::cout << "total count: [" << kmerSetPtr->getSetSize() << "] " << counter << " ";
+		std::cout << "total count: " << counter << " ";
         bamRegionPtr->print();
 
 		{
 			// std::lock_guard< std::mutex > guard(m_lock);
 			// m_set.insert(set.begin(), set.end());
 		}
-		return kmerSetPtr;
+		// return kmerSetPtr;
+		return nullptr;
 	}
 }

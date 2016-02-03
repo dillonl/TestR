@@ -5,6 +5,7 @@
 #include "alignments/BamAlignmentReader.h"
 #include "utils/ThreadPool.hpp"
 #include "containers/KmerSet.hpp"
+#include "containers/MintomicKmerSet.hpp"
 
 namespace
 {

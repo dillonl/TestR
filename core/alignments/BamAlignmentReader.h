@@ -6,6 +6,7 @@
 
 #include "IAlignmentReader.h"
 #include "containers/KmerSetManager.hpp"
+#include "containers/MintomicKmerSet.hpp"
 
 #include <boost/noncopyable.hpp>
 
@@ -54,7 +55,8 @@ namespace rufus
 		std::string m_file_path;
 		std::mutex m_lock;
 		/* std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_set; */
-		SparseKmerSet::SharedPtr m_kmer_set_ptr;
+		/* SparseKmerSet::SharedPtr m_kmer_set_ptr; */
+        MintomicKmerSet::SharedPtr m_kmer_set_ptr;
 	};
 }
 

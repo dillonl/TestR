@@ -31,7 +31,7 @@ add_executable(rufus
   ${RUFUS_TOOLS_SOURCES}
 )
 
-add_dependencies(rufus ${BAMTOOLS_PROJECT} ${JELLYFISH_PROJECT} ${BWA_PROJECT} Boost_external ${SPARSEHASH_PROJECT} ${CONCURRENTQUEUE})
+add_dependencies(rufus ${BAMTOOLS_PROJECT} ${JELLYFISH_PROJECT} ${BWA_PROJECT} Boost_external ${SPARSEHASH_PROJECT} ${CONCURRENTQUEUE} ${MINTOMIC_PROJECT})
 
 # link libraries to executables
 target_link_libraries(rufus
@@ -43,4 +43,5 @@ target_link_libraries(rufus
 	#${FASTAHACK_LIB}
 	${SCI_BOOST_LIBRARY}
 	${CONCURRENTQUEUE_INCLUDE_DIR}
+	${MINTOMIC_INCLUDE}
 )
