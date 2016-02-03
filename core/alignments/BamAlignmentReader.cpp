@@ -42,7 +42,7 @@ namespace rufus
 		auto referenceData = bamReader.GetReferenceData();
 		// get the region pointers
 		std::vector< BamRegion::SharedPtr > regionPtrs;
-		uint32_t intervalSize = 500000;
+		uint32_t intervalSize = 250000;
 		for (auto regionID : regionIDs)
 		{
 			uint32_t regionLastPosition = referenceData[regionID].RefLength;
@@ -108,7 +108,8 @@ namespace rufus
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
 		// KmerSet::SharedPtr kmerSetPtr = std::make_shared< KmerSet >();
 		// kmerSetPtr->resize(11000000);
-		std::vector< InternalKmer > kmerContainer(11000000);
+		// std::vector< InternalKmer > kmerContainer(33804365);
+		std::vector< InternalKmer > kmerContainer(30000000);
 
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
@@ -131,7 +132,7 @@ namespace rufus
 			if (bamAlignmentPtr->Position < bamRegionPtr->getStartPosition()) { continue; }
 			auto kmersNumber = (bamAlignmentPtr->Length - KMER_SIZE);
 			if (kmersNumber > internalKmers.size()) { internalKmers.resize(kmersNumber); }
-			if (kmerContainer.size() < counter + kmersNumber) { kmerContainer.resize(kmerContainer.size() + 2500000); }
+			if (kmerContainer.size() < counter + kmersNumber) { kmerContainer.resize(kmerContainer.size() * 2); }
 			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, internalKmers))
 			// if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, kmerCollection + kmerCount))
 			{
