@@ -146,20 +146,20 @@ namespace rufus
 		}
 		bamReader.Close();
 
-		// std::cout << "total count: [" << kmerSetPtr->getSetSize() << "] " << counter << " ";
-		std::cout << "total count: " << counter << " ";
-        bamRegionPtr->print();
-
-
 		m_kmer_set_lock.lock();
 		for (auto i = 0; i < counter; ++i)
 		{
 			m_kmer_set_ptr->addKmer(kmerContainer[i]);
 		}
-			// std::lock_guard< std::mutex > guard(m_lock);
-			// m_set.insert(set.begin(), set.end());
+		// std::lock_guard< std::mutex > guard(m_lock);
+		// m_set.insert(set.begin(), set.end());
 		m_kmer_set_lock.unlock();
 		kmerContainer.clear();
+
+		// std::cout << "total count: [" << kmerSetPtr->getSetSize() << "] " << counter << " ";
+		std::cout << "total count: " << counter << " ";
+        bamRegionPtr->print();
+
 		// return kmerSetPtr;
 		return nullptr;
 	}
