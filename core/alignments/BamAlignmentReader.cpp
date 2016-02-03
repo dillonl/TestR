@@ -112,7 +112,7 @@ namespace rufus
 		// set.set_empty_key(emptyKey);
 		// set.clear_deleted_key();
 		// std::vector< InternalKmer > kmerContainer(33804365);
-		std::vector< InternalKmer > kmerContainer(30000000);
+		// std::vector< InternalKmer > kmerContainer(30000000);
 
 		uint32_t counter = 0;
 		BamTools::BamReader bamReader;
@@ -135,7 +135,7 @@ namespace rufus
 			if (bamAlignmentPtr->Position < bamRegionPtr->getStartPosition()) { continue; }
 			auto kmersNumber = (bamAlignmentPtr->Length - KMER_SIZE);
 			if (kmersNumber > internalKmers.size()) { internalKmers.resize(kmersNumber); }
-			if (kmerContainer.size() < counter + kmersNumber) { kmerContainer.resize(kmerContainer.size() * 2); }
+			// if (kmerContainer.size() < counter + kmersNumber) { kmerContainer.resize(kmerContainer.size() * 2); }
 			if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, internalKmers))
 			// if (AlignmentParser::ParseAlignment(bamAlignmentPtr->QueryBases.c_str(), kmersNumber, kmerCollection + kmerCount))
 			{
