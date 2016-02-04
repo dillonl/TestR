@@ -14,7 +14,8 @@ namespace rufus
 		m_file_path(filePath)
 	{
 		m_kmer_set_ptr = std::make_shared< MintomicKmerSet >();
-		m_kmer_set_ptr->resize(6000000000);
+		// m_kmer_set_ptr->resize(6000000000);
+		m_kmer_set_ptr->resize(60000);
 	}
 
 	BamAlignmentReader::~BamAlignmentReader()
@@ -40,7 +41,7 @@ namespace rufus
 		auto referenceData = bamReader.GetReferenceData();
 		// get the region pointers
 		std::vector< BamRegion::SharedPtr > regionPtrs;
-		uint32_t intervalSize = 250000;
+		uint32_t intervalSize = 1000000;
 		for (auto regionID : regionIDs)
 		{
 			uint32_t regionLastPosition = referenceData[regionID].RefLength;
@@ -99,8 +100,8 @@ namespace rufus
 
 	IKmerSet::SharedPtr BamAlignmentReader::processReads(BamRegion::SharedPtr bamRegionPtr)
 	{
-		// static std::mutex lock2;
-		// std::lock_guard< std::mutex > guard(lock2);
+		static std::mutex lock2;
+		std::lock_guard< std::mutex > guard(lock2);
 		// std::cout << "locked" << std::endl;
 
 		// SparseKmerSet::SharedPtr kmerSetPtr = std::make_shared< SparseKmerSet >();
@@ -151,7 +152,7 @@ namespace rufus
 		}
 		bamReader.Close();
 
-		std::cout << "total count: " << counter << " ";
+		std::cout << "total count: [" << m_kmer_set_ptr->getSetSize() << "] " << counter << " ";
         bamRegionPtr->print();
 
 		// return kmerSetPtr;
