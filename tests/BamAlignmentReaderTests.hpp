@@ -43,9 +43,11 @@ namespace
 
 	TEST(BamAlignmentReaderTest, GetAllAlignmentsInRegion2)
 	{
+/*
 		std::string path = "/uufs/chpc.utah.edu/common/home/marth-d1/data/WashU_serialTumors/bams/B0.bam";
 		BamAlignmentReader::SharedPtr readerPtr = std::make_shared< BamAlignmentReader >(path);
 		readerPtr->processAllReadsInBam();
+*/
 	}
 }
 

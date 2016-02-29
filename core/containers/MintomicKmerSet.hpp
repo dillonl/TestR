@@ -29,9 +29,10 @@ namespace rufus
 			mint_store_64_relaxed(&m_current_set_size, 0);
 		}
 
+		/*
 		//----------------------------------------------
         // from code.google.com/p/smhasher/wiki/MurmurHash3
-		inline static uint32_t integerHash(uint64_t h)
+		inline static uint64_t integerHash(uint64_t h)
 		{
 			h ^= h >> 33;
 			h *= 0xff51afd7ed558ccd;
@@ -40,71 +41,37 @@ namespace rufus
 			h ^= h >> 33;
 			return h;
 		}
+		*/
+#define BIG_CONSTANT(x) (x##LLU)
+		static inline uint64_t integerHash( uint64_t k )
+		{
+			k ^= k >> 33;
+			k *= BIG_CONSTANT(0xff51afd7ed558ccd);
+			k ^= k >> 33;
+			k *= BIG_CONSTANT(0xc4ceb9fe1a85ec53);
+			k ^= k >> 33;
+
+			return k;
+		}
 
 		void addKmer(InternalKmer key) override
 		{
-			/*
-			for (uint32_t idx = integerHash(internalKmer);; idx++)
+			InternalKmer value = 1;
+			if (key == 0) { return; }
+			assert(key != 0);
+			assert(value != 0);
+
+			for (uint32_t idx = integerHash(key);; idx++)
 			{
 				idx &= m_total_set_size - 1;
-				std::cout << "idx: " << idx << std::endl;
 
-				InternalKmer prevKey = mint_compare_exchange_strong_64_relaxed(&m_kmer_set[idx], 0, internalKmer);
-				if ((prevKey == 0) || (prevKey == internalKmer))
+				uint32_t prevKey = mint_compare_exchange_strong_32_relaxed(&m_entries[idx].key, 0, key);
+				if ((prevKey == 0) || (prevKey == key))
 				{
-					// mint_store_64_relaxed(&m_kmer_set[idx], internalKmer);
-					// mint_store_64_relaxed(&m_current_set_size, mint_load_64_relaxed(&m_current_set_size) + 1);
+					mint_store_32_relaxed(&m_entries[idx].value, value);
 					return;
 				}
 			}
-			*/
-
-			for (uint64_t idx = integerHash(key);; ++idx)
-			{
-				// idx &= m_arraySize - 1;
-				idx &= m_total_set_size - 1;
-				if (idx >= m_total_set_size)
-				{
-					std::cout << "idx too large: " << idx << std::endl;
-				}
-
-				// Load the key that was there.
-				uint64_t probedKey = mint_load_64_relaxed(&m_kmer_set[idx]);
-				if (probedKey != key)
-				{
-					// The entry was either free, or contains another key.
-					if (probedKey != 0)
-					{
-						std::cout << "freed  memory or contains key: " << probedKey << std::endl;
-						continue;           // Usually, it contains another key. Keep probing.
-					}
-					// The entry was free. Now let's try to take it using a CAS.
-					uint64_t prevKey = mint_compare_exchange_strong_64_relaxed(&m_kmer_set[idx], 0, key);
-					if ((prevKey != 0) && (prevKey != key))
-					{
-						std::cout << "Stolen!!!" << std::endl;
-						continue;       // Another thread just stole it from underneath us.
-					}
-
-					// Either we just added the key, or another thread did.
-					// Store the value in this array entry.
-					mint_store_64_relaxed(&m_kmer_set[idx], key);
-					mint_store_64_relaxed(&m_current_set_size, mint_load_64_relaxed(&m_current_set_size) + 1);
-				}
-				return;
-			}
-
-			/*
-			auto iter = m_kmer_set.find(internalKmer);
-			if (iter == m_kmer_set.end())
-			{
-				internalKmer = (internalKmer & 0x0003FFFFFFFFFFFF);
-				iter = m_kmer_set.emplace(internalKmer).first;
-				// iter = m_kmer_set.find(internalKmer);
-			}
-			auto iterPtr = const_cast< InternalKmer* >(&(*iter));
-			*iterPtr = (internalKmer | ((((*iter) >> KMER_SHIFTER_SIZE) + KMER_COUNT_INC) << KMER_SHIFTER_SIZE));
-			*/
 		}
 
 		uint64_t getKmerCount(InternalKmer internalKmer) override
@@ -125,16 +92,32 @@ namespace rufus
 		{
 		}
 
-		void resize(uint64_t size) override
+		void resize(uint64_t arraySize) override
 		{
+			assert((arraySize & (arraySize - 1)) == 0);   // Must be a power of 2
+			m_arraySize = arraySize;
+			m_entries = new Entry[arraySize];
+			memset(m_entries, 0, sizeof(Entry) * m_arraySize);
+
+			/*
 			m_kmer_set = new mint_atomic64_t[size];
 		    memset(m_kmer_set, 0, sizeof(mint_atomic64_t) * size);
 			m_total_set_size = size;
 			mint_store_64_relaxed(&m_current_set_size, 0);
+			*/
 			// m_current_set_size = size;
 		}
 
 	private:
+		struct Entry
+		{
+			mint_atomic32_t key;
+			mint_atomic32_t value;
+		};
+
+		Entry* m_entries;
+		uint32_t m_arraySize;
+
 		// std::unordered_set< InternalKmer, KmerHash, KmerKeyEqual > m_kmer_set;
 		mint_atomic64_t* m_kmer_set;
 		size_t m_total_set_size;
